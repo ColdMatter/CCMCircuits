@@ -13032,6 +13032,7 @@ type RDH, grid 15 mm</description>
 <part name="R3" library="resistor" deviceset="R-EU_" device="0207/10"/>
 <part name="R4" library="resistor" deviceset="R-EU_" device="0207/10"/>
 <part name="R5" library="resistor" deviceset="R-EU_" device="0207/10"/>
+<part name="R1" library="resistor" deviceset="R-EU_" device="0207/10"/>
 </parts>
 <sheets>
 <sheet>
@@ -13039,7 +13040,7 @@ type RDH, grid 15 mm</description>
 <text x="88.9" y="101.6" size="1.778" layer="91">Use imput low bias current op-amp (e.g. CA3140)</text>
 </plain>
 <instances>
-<instance part="JP1" gate="G$1" x="111.76" y="58.42" rot="R180"/>
+<instance part="JP1" gate="G$1" x="124.46" y="58.42" rot="R180"/>
 <instance part="GND1" gate="1" x="83.82" y="93.98"/>
 <instance part="GND2" gate="1" x="93.98" y="68.58"/>
 <instance part="GND" gate="G$1" x="109.22" y="78.74"/>
@@ -13061,7 +13062,7 @@ type RDH, grid 15 mm</description>
 <instance part="GND4" gate="1" x="63.5" y="43.18"/>
 <instance part="P-2" gate="1" x="73.66" y="43.18"/>
 <instance part="P+2" gate="1" x="73.66" y="76.2"/>
-<instance part="GND5" gate="1" x="114.3" y="45.72"/>
+<instance part="GND5" gate="1" x="127" y="45.72"/>
 <instance part="S1" gate="G$1" x="76.2" y="22.86" rot="R180"/>
 <instance part="S2" gate="G$1" x="76.2" y="12.7" rot="R180"/>
 <instance part="C3" gate="G$1" x="73.66" y="33.02" rot="R90"/>
@@ -13070,6 +13071,7 @@ type RDH, grid 15 mm</description>
 <instance part="R3" gate="G$1" x="93.98" y="22.86" rot="R180"/>
 <instance part="R4" gate="G$1" x="93.98" y="15.24" rot="R180"/>
 <instance part="R5" gate="G$1" x="93.98" y="12.7" rot="R180"/>
+<instance part="R1" gate="G$1" x="109.22" y="58.42" rot="R180"/>
 </instances>
 <busses>
 </busses>
@@ -13129,9 +13131,7 @@ type RDH, grid 15 mm</description>
 <segment>
 <pinref part="GND5" gate="1" pin="GND"/>
 <pinref part="JP1" gate="G$1" pin="1"/>
-<wire x1="114.3" y1="55.88" x2="116.84" y2="55.88" width="0.1524" layer="91"/>
-<wire x1="116.84" y1="55.88" x2="116.84" y2="50.8" width="0.1524" layer="91"/>
-<wire x1="116.84" y1="50.8" x2="114.3" y2="48.26" width="0.1524" layer="91"/>
+<wire x1="127" y1="55.88" x2="127" y2="48.26" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$7" class="0">
@@ -13282,13 +13282,10 @@ type RDH, grid 15 mm</description>
 <pinref part="R3" gate="G$1" pin="1"/>
 <wire x1="101.6" y1="22.86" x2="99.06" y2="22.86" width="0.1524" layer="91"/>
 <pinref part="IC1" gate="A" pin="OUT"/>
-<pinref part="JP1" gate="G$1" pin="2"/>
 <wire x1="83.82" y1="58.42" x2="101.6" y2="58.42" width="0.1524" layer="91"/>
 <pinref part="C3" gate="G$1" pin="2"/>
-<wire x1="101.6" y1="58.42" x2="114.3" y2="58.42" width="0.1524" layer="91"/>
 <wire x1="78.74" y1="33.02" x2="101.6" y2="33.02" width="0.1524" layer="91"/>
 <wire x1="101.6" y1="33.02" x2="101.6" y2="58.42" width="0.1524" layer="91"/>
-<junction x="101.6" y="58.42"/>
 <wire x1="101.6" y1="33.02" x2="101.6" y2="25.4" width="0.1524" layer="91"/>
 <junction x="101.6" y="33.02"/>
 <wire x1="96.52" y1="25.4" x2="99.06" y2="25.4" width="0.1524" layer="91"/>
@@ -13309,6 +13306,16 @@ type RDH, grid 15 mm</description>
 <junction x="99.06" y="25.4"/>
 <junction x="99.06" y="15.24"/>
 <junction x="99.06" y="12.7"/>
+<pinref part="R1" gate="G$1" pin="2"/>
+<wire x1="104.14" y1="58.42" x2="101.6" y2="58.42" width="0.1524" layer="91"/>
+<junction x="101.6" y="58.42"/>
+</segment>
+</net>
+<net name="N$10" class="0">
+<segment>
+<pinref part="JP1" gate="G$1" pin="2"/>
+<pinref part="R1" gate="G$1" pin="1"/>
+<wire x1="127" y1="58.42" x2="114.3" y2="58.42" width="0.1524" layer="91"/>
 </segment>
 </net>
 </nets>
