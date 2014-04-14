@@ -1,0 +1,11 @@
+Buffered VCO. Any Minicircuits VCO will work.
+
+Traces are nominally 50 Ohm of 1/16" FR4 circuit board.
+
+The op-amp is optional, depending if you want a 
+buffered summing configuration.
+
+When building the board, I suggest placing the chokes
+first (the TCCH80) since they are almost impossible to solder.
+This makes it easy to check that they are connected and 
+not shorted.
