@@ -75,7 +75,7 @@
 <wire x1="99.04" y1="77.14" x2="0" y2="77.14" width="0" layer="20"/>
 <wire x1="0" y1="77.14" x2="0" y2="0" width="0" layer="20"/>
 <text x="13.97" y="69.85" size="2.54" layer="16" font="vector" ratio="15" rot="MR270">Square-To-Triangle</text>
-<text x="8.89" y="69.85" size="2.54" layer="16" font="vector" ratio="15" rot="MR270">Ramp Generator v1.0</text>
+<text x="8.89" y="69.85" size="2.54" layer="16" font="vector" ratio="15" rot="MR270">Ramp Generator v2.0</text>
 </plain>
 <libraries>
 <library name="rcl">
