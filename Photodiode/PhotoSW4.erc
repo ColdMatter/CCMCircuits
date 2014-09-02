@@ -1,0 +1,17 @@
+EAGLE Version 4.09 Copyright (c) 1988-2001 CadSoft
+
+Electrical Rule Check for d:/ben/drawings/Electronics/projects/Photodiode/PhotoSW4.sch at 25/11/2003 14:50:21 
+
+WARNING: Sheet 1/1: POWER Pin IC1 V+ connected to +12V
+WARNING: Sheet 1/1: POWER Pin IC1 V- connected to -12V
+WARNING: Sheet 1/1: POWER Pin X1 GND connected to AGND
+WARNING: Sheet 1/1: POWER Pin X1G2 GND connected to AGND
+WARNING: Sheet 1/1: POWER Pin X1G3 GND connected to AGND
+WARNING: Sheet 1/1: POWER Pin X1G4 GND connected to AGND
+WARNING: Sheet 1/1, Net -15V: missing Junction at (4.5 0.4)
+WARNING: Sheet 1/1, Net +15V: missing Junction at (4.5 2.4)
+
+Board and schematic are consistent
+
+    0 errors
+    8 warnings
