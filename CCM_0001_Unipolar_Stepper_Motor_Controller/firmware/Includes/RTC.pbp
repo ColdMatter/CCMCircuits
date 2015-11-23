@@ -1,0 +1,76 @@
+Disable Interrupt
+
+;RTC Internal DEFINITIONS
+rtcAging			VAR	Byte			'Aging offset data
+rtcTempMSB			VAR	Byte			'temperature (most significant byte)
+rtcTempLSB			VAR	Byte			'temperature (least significant byte)
+rtcControl			VAR	Byte			'control byte for RTC operation
+rtcENOSC_			VAR	rtcControl.7	'enable oscillator (active low)
+rtcBBSQW			VAR	rtcControl.6	'enable square wave output on battery power
+rtcCONV				VAR	rtcControl.5	'set to 1 to force temperature compensation converstion
+rtcINTCN			VAR	rtcControl.2	'interrupt control: 0 for 1Hz square wave output, 1 for high on alarm condition (if alarms active)
+rtcA2IE				VAR	rtcControl.1	'Alarm 2 interrupt enable
+rtcA1IE				VAR	rtcControl.0	'Alarm 1 interrupt enable
+rtcStatus			VAR	Byte			'status byte for RTC operation
+rtcOSF				VAR	rtcStatus.7		'oscillator stop flag, remains 1 until written as 0
+rtcEN32kHz			VAR	rtcStatus.3		; 0 to make 32kHz output high impedance, 1 to enable output
+rtcBSY				VAR	rtcStatus.2		'flag indicates rtc is busy executing temperauture compensation
+rtcA2F				VAR	rtcStatus.1		'flag indicating time matched alarm 2 registers
+rtcA1F				VAR	rtcStatus.0		'flag indicating time matched alarm 1 registers
+
+rtcSecondsREG		CON		$00			; variable rtcAddress gets set to one of these for reading/writing	
+rtcMinutesREG		CON		$01			; burst read/write is predominantly used for this application
+rtcHoursREG			CON		$02
+rtcDayREG			CON		$03		
+rtcDateREG			CON		$04
+rtcMonthsREG		CON		$05		
+rtcYearsREG			CON		$06
+rtcAlarm1SecsREG	CON		$07
+rtcAlarm1MinsREG	CON		$08
+rtcAlarm1HoursREG	CON		$09
+rtcAlarm1DaysREG	CON		$0A
+rtcAlarm2MinsREG	CON		$0B
+rtcAlarm2HoursREG	CON		$0C
+rtcAlarm2DaysREG	CON		$0D
+rtcControlREG		CON		$0E
+rtcStatusREG		CON		$0F
+rtcAgingREG			CON		$10
+rtcTempMSBREG		CON		$11
+rtcTempLSBREG		CON		$12
+
+goto	RTC_Done		'jump over subroutines so that they don't evaluate on startup
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; SUBROUTINES ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+SetupRTC:	
+	rtcControl 	=	$00	; enable osc, no square wave on battery, 1Hz on pin 3, no alarm1, no alarm2
+	rtcStatus	=	%00001000 ; oscillator time now valid, yes 32kHz output, not busy, no alarm conditions
+	rtcAging	=	$00	; no aging oscillator correction when first set up
+	I2Cwrite		I2Cdata,I2Cclk,rtcI2Caddress,rtcControlREG,[rtcControl,rtcStatus,rtcAging]
+	pause	10										
+Return
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+UpdateRTC:						; BURST WRITE
+	for i=0 to TimeLength-1
+		TimeBCD[i] = (Time[i]/10)<<4 + (Time[i]-10*(Time[i]/10))
+	next i
+	I2Cwrite	I2Cdata,I2Cclk,rtcI2Caddress,rtcSecondsREG,[STR TimeBCD \TimeLength]
+	pause 10
+Return
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ReadRTC:						; BURST READ
+	I2Cread		I2Cdata,I2Cclk,rtcI2Caddress,rtcSecondsREG,[STR TimeBCD \TimeLength]
+	
+	for i=0 to TimeLength-1
+		Time[i] = 10*(TimeBCD[i]>>4) + (TimeBCD[i] & $0F)	
+	next i
+Return
+
+
+RTC_Done:
+
+Enable Interrupt

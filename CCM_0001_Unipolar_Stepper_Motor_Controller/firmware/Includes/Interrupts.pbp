@@ -1,0 +1,26 @@
+Disable Interrupt
+goto	Interrupts_Done
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; enable serial communication interrupt
+EnableInterrupts:
+	RC1IF	= 0			; clear interrupt conditions, not sure if RC1IF can be written directly
+	B 		= RCREG1	; but reading RCREG1 should clear it	
+	CREN1	= 0			; clear continous receive to clear errors
+	pause 	1
+	CREN1	= 1			; and then enable continous receive to re-enable port
+	RC1IE	= 1			; enable serial receive interrupt (first port)
+	PEIE	= 1			; enable peripheral interrupts
+	IPEN	= 0			; all interrupts are high priority
+	GIE		= 1			; enable periferal and global interrupts
+return
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+DisableInterrupts:
+	GIE 	= 0			; just turn off global enable flag
+	PEIE	= 0			; enable peripheral interrupts
+	RC1IE	= 0			; enable serial receive interrupt (first port)
+Return
+
+Interrupts_Done:
+Enable Interrupt

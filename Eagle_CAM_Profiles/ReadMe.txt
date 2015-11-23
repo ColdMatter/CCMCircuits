@@ -1,0 +1,5 @@
+2layer.cam is a cam processor profile for generating gerber files from within Eagle (cadsoft).  At the moment of this writing it is quite generic and may produce gerber files that you don't need (such as a bottom stencil file).  You can alter the job profile and save it as a different configuration (for example, 2layer_simple.cam).  
+
+How to use a cam profile:
+
+Once your board is complete and has passed the design rules check, open the 'cam processor'.  Then file -> open job -> 2layer.cam (or equivalent).  When you process the job, the gerber files will be created.  File suffixes are summarized in another file in this directory.  I HIGHLY recommend that you inspect the files with a gerber file viewer before ordering your boards.  If something doesn't look quite right, or you've somehow left off component labels, etc., you can reconfigure the cam profile and rerun the job.  -NF.  

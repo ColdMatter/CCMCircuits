@@ -1,0 +1,47 @@
+
+	NOLIST
+; PICBASIC PRO(TM) Compiler 3.0.7.4, (c) 1998, 2013 microEngineering Labs, Inc. All Rights Reserved. 
+
+LABEL?L macro Label
+        RST?RP
+    ifdef PM_USED
+        LALL
+Label
+        XALL
+    else
+Label
+    endif
+    endm
+
+MAX?CCW macro Cin1, Cin2, Wout
+        MOVE?CN Cin1, R0
+        MOVE?CB (Cin2) >> 24, R1 + 3
+        MOVE?CB upper (Cin2), R1 + 2
+        MOVE?CB high (Cin2), R1 + 1
+        MOVE?CA low (Cin2)
+        L?CALL  MAX
+        MOVE?AWW R0, Wout
+    endm
+MAX_USED = 1
+
+GOTO?L macro Label
+        L?GOTO  Label
+    endm
+
+IDISABLE? macro
+    endm
+
+IENABLE? macro
+    endm
+
+RETURN? macro
+    ifdef DEBUG_STACK
+        CHK?RP  DEBUG_STACK
+        decf    DEBUG_STACK, F
+    endif
+        RST?RP
+        return
+    endm
+
+
+	LIST

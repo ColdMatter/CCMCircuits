@@ -1,0 +1,12 @@
+
+	NOLIST
+; PICBASIC PRO(TM) Compiler 3.0.7.4, (c) 1998, 2013 microEngineering Labs, Inc. All Rights Reserved. 
+
+IDISABLE? macro
+    endm
+
+IENABLE? macro
+    endm
+
+
+	LIST

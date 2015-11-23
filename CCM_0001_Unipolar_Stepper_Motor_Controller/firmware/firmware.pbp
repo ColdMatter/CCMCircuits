@@ -1,0 +1,581 @@
+'****************************************************************
+'*  Name    : Unipolar Stepper Motor Controller RevA
+'*  Author  : Noah Fitch (nofitch@gmail.com)
+'*  Notice  : Copyright (c) 2010                                
+'*          : All Rights Reserved                               
+'*  Date    : 27-Jul-2015                                           
+'*  Version : 1.0                                               
+'*  Notes   :                                                   
+'*          :                                                   
+'****************************************************************
+
+Disable Interrupt
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;DEVICE CONFIGURATON (PICBASIC)
+DEFINE	Loader_Used		1		; leave bottom 4 program memory address spaces for bootloader program (ds30 free version)
+DEFINE  OSC 			4     	; Using a 4 MHz oscillator (the truth!)
+DEFINE 	HSER_RCSTA 		90h 	; enable serial port receive
+DEFINE 	HSER_TXSTA 		20h		; enable serial port transmit
+DEFINE 	HSER_BAUD 		4800	; serial port baud rate (limited by 4MHz osc.)
+DEFINE	HSER_CLROERR	1		; clear overrun errors automatically 
+DEFINE 	BUTTON_PAUSE 	100
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+include "Includes\BitDefinitions.pbp"			; special register bit definitions, device file only includes register names
+include "Includes\Configuration.pbp"			; PIC configuration, software fuses, and external hardware connections
+include "Includes\Variables.pbp"				; variables and constants that aren't "local" to specific device subroutines
+include "Includes\LCD.pbp"						; I2C LCD subroutines
+include "Includes\RTC.pbp"						; DS3231M I2C RTC
+include "Includes\EEPROM.pbp"					; 24AA1025 external EEPROM, for saving settings and {time,position} pairs
+include "Includes\SerialCommunication.pbp"		; handle communication from the PC via the serial port
+include "Includes\Interrupts.pbp"				; interrupt setup
+
+Data @0,1										; first time starting flag (only written when first programmed)
+
+Start:                               ;
+	ArrayWrite Firmware,["1.3"]
+
+	gosub		SetupIO
+	gosub		TurnMotorOff
+	gosub		GivePICbus
+	gosub		EnablePushLights
+	pause		500							; let the lcd warmup
+	gosub		SetupLCD
+
+	I2Cwrite	I2Cdata,I2Cclk,lcdI2Caddress,["Stepper Controller  "]
+	gosub		SetCursorLine2
+	I2Cwrite	I2Cdata,I2Cclk,lcdI2Caddress,["v",STR Firmware \FirmwareLength]
+	pause		2000
+	gosub		ClearLCD
+	I2Cwrite	I2Cdata,I2Cclk,lcdI2Caddress,["Setting Up...       "]
+	pause		1000
+
+	gosub		SetupRTC						; configure the real time clock		
+
+	gosub		ClearLCD
+	Read		0,FirstTimeOn					; read in address 0 of internal eeprom (written as 1 during initial programming only)
+	If	FirstTimeOn=Yes then 
+	 	I2Cwrite	I2Cdata,I2Cclk,lcdI2Caddress,["Loading defaults   "]
+		gosub		SetValuesToDefault
+		gosub		SaveSettings
+		FirstTimeOn=No					; clear the first time starting flag
+		Write	0,FirstTimeOn				; and save that to the internal eeprom
+	Else
+	 	I2Cwrite	I2Cdata,I2Cclk,lcdI2Caddress,["Restoring settings  "]
+		gosub		RestoreSettings
+	EndIf	
+	pause		1000
+
+    Setpoint_L = Position_L                 ; start with no position error
+	gosub		ConfigureMotor
+	pause		10							; allow motor to settle
+	gosub		ResetCounter
+	gosub		DisablePushLights
+	limit	=	No							; assume motor not at limit
+
+	TempFeedbackOn	=	FeedbackOn + 1		; ensure mismatch for display test
+	TempSetpoint_L	=	Setpoint_L + 1
+	TempPosition_L	=	Position_L + 1
+	gosub		ClearLCD
+	If Mode>9 then Mode=Manual
+
+	gosub		EnableInterrupts
+
+goto			Main						; Assume normal operation
+
+On Interrupt goto	PCrequest
+			
+Enable Interrupt			
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; MAIN PROGRAM LOOP
+Main: 	
+	gosub	DisablePushLights
+	for i=0 to 9
+		pause 1
+	next i
+	Select Case OpMode
+		Case MotorOff
+			goto	MotorOffMode
+		Case Manual
+			goto ManualMode
+		Case External
+			goto ExternalMode
+		Case TriggeredGoto
+			goto TriggeredGotoMode
+		Case TimedGoto
+			goto TimedGotoMode
+		Case TriggeredMove
+			goto TriggeredMoveMode
+		Case TimedMove
+			goto TimedMoveMode
+		Case StateRotate
+			goto StateRotateMode
+		Case TriggeredShutter
+			goto TriggeredShutterMode
+		Case StateShutter
+			goto StateShutterMode
+	End	Select
+goto Main
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+MotorOffMode:
+	gosub		GivePICBus					; make sure PIC has the bus
+	gosub		TurnMotorOff				; make sure motor is enabled
+	gosub		ClearLCD
+	gosub		MotorOffDisplay
+MotorOffModeLoop:
+	pause		100
+    gosub       CheckForModeChange
+	gosub		GetPosition
+	gosub		ReadRTC
+goto	MotorOffModeLoop
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Manual Operation Mode (OpMode=1)
+ManualMode:
+	gosub		GivePICBus					; make sure PIC has the bus
+	gosub		TurnMotorOn					; make sure motor is enabled
+	gosub		EnablePushLights
+	gosub		ClearLCD
+	gosub		ManualDisplay
+ManualLoop:
+    gosub		CheckForModeChange                          ; abort correction process by changing the mode
+	gosub       CorrectPosition
+
+	Button 		Right,0,10,1,Ri,1,ManualRight	; pin, down, delay, rate, variable, action, label
+	Button 		Left,0,10,1,Li,1,ManualLeft		; delay = how many loops you must hold the button for it to be considered held
+												; rate = number of loops thereafter which the hold condition is checked
+												; so the held step rate and delay depends on how long this loop takes to execute
+	goto		ManualLoop						; nothing is pressed
+
+ManualRight:
+	Setpoint_L = 	Setpoint_L-C				; step counting variables are actually 16 per step
+	goto		ManualLoop
+	
+ManualLeft:
+	Setpoint_L = 	Setpoint_L+C
+	goto		ManualLoop
+
+goto	ManualLoop
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; External Mode (OpMode=2)
+; 16 bit counters TMR0 and TMR1 count external rising edges to determine desired position
+ExternalMode:
+	gosub		GivePICbus					; give pic bus whilst setting up
+	gosub		TurnMotorOn					; make sure motor is enabled	
+	gosub		ClearLCD
+	gosub		GiveExtBus					; give step/direction bus to external controls
+	TMR0H = 0                               ; zero the counters
+	TMR0L = 0
+	TMR1H = 0
+	TMR1L = 0
+    Setpoint_L = Position_L                 
+	gosub		ExternalDisplay
+ExternalLoop:   ; timer 1 counts positive steps, timer 0 counts negative ones
+    gosub		CheckForModeChange                          ; abort correction process by changing the mode
+    Setpoint_L = Setpoint_L + C*(256*TMR1H + TMR1L) - C*(256*TMR0H + TMR0L)  ; get total step count from edge counters
+    gosub		CorrectPosition
+goto		ExternalLoop
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Triggered Goto Mode (OpMode=3)
+TriggeredGotoMode:
+	gosub		GivePICBus					; make sure PIC has the bus
+	gosub		TurnMotorOn					; make sure motor is enabled
+	gosub		ClearLCD				
+	gosub		ClearCounters				; clear the two timers (TMR0 and TMR1), the sum of which is the trigger count
+	gosub		TriggeredGotoDisplay
+TriggeredGotoLoop:
+    gosub   CheckForModeChange                          ; abort correction process by changing the mode
+	gosub	GetTriggers
+	gosub	UpdateTriggers
+	If Triggers_W >= DoTriggers_W then ExecuteTriggeredGoto	; do the goto if number of triggers has been reached
+
+	gosub	CorrectPosition
+	goto	TriggeredGotoLoop				; or continue waiting...
+ExecuteTriggeredGoto:
+	Setpoint_L = Destination_L
+	gosub	CorrectPosition					; make move to desired position (setpoint)
+	goto	TriggeredGotoMode
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Timed Goto Mode (OpMode=4)
+TimedGotoMode:
+	gosub		GivePICBus					; make sure PIC has the bus
+	gosub		TurnMotorOn					; make sure motor is enabled
+	gosub		ClearLCD
+TimedGotoLoop:
+    gosub   CheckForModeChange                          ; abort correction process by changing the mode
+	gosub	ReadRTC							; get current time/date (updates hours,minutes,days variables, etc.)
+	gosub	TimedGotoDisplay
+	Select Case TimeMatch
+		Case Secs
+			If Time[Seconds]=DoTime[Seconds] then ExecuteTimedGoto
+		Case SecsMins
+			If Time[Seconds]=DoTime[Seconds] AND Time[Minutes]=DoTime[Minutes] then ExecuteTimedGoto
+		Case SecsMinsHrs
+			If Time[Hours]=DoTime[Hours] AND Time[Minutes]=DoTime[Minutes] AND Time[Seconds]=DoTime[Seconds] then ExecuteTimedGoto
+	End Select
+	gosub	CorrectPosition					; check feedback, adjust position if necessary
+	pause	10
+	goto	TimedGotoLoop					; or wait for next time match
+ExecuteTimedGoto:
+	Setpoint_L = Destination_L
+	gosub	CorrectPosition
+	goto	TimedGotoMode
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Triggered Move Mode (OpMode=5)
+TriggeredMoveMode:
+	gosub		GivePICBus					; make sure PIC has the bus
+	gosub		TurnMotorOn					; make sure motor is enabled
+	gosub		ClearLCD
+	gosub		ClearCounters				; clear the two timers (TMR0 and TMR3), the sum of which is the trigger count
+	gosub		TriggeredMoveDisplay				
+TriggeredMoveLoop:
+    gosub		CheckForModeChange                          ; abort correction process by changing the mode
+	gosub		GetTriggers
+	gosub		UpdateTriggers
+	If Triggers_W >= DoTriggers_W then ExecuteTriggeredMove		; do the move if number of triggers has been reached
+	gosub		CorrectPosition
+	goto		TriggeredMoveLoop				; or wait for next trigger	
+ExecuteTriggeredMove:
+	Setpoint_L = Setpoint_L + Steps_L
+	gosub		CorrectPosition					; make move to desired position (setpoint)
+	if limit=Yes AND AtLimit=SwitchDirection then Steps_L = -Steps_L	; switch direction if desired
+	goto		TriggeredMoveMode
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Timed Move Mode (OpMode=6)
+TimedMoveMode:
+	gosub		GivePICBus					; make sure PIC has the bus
+	gosub		TurnMotorOn					; make sure motor is enabled
+	gosub		ClearLCD
+TimedMoveLoop:
+    gosub		CheckForModeChange                          ; abort correction process by changing the mode
+	gosub		ReadRTC							; get current time/date (updates hours,minutes,days variables, etc.)
+	gosub		TimedMoveDisplay
+	Select Case TimeMatch
+		Case Secs
+			If Time[Seconds]=DoTime[Seconds] then ExecuteTimedMove
+		Case SecsMins
+			If Time[Seconds]=DoTime[Seconds] AND Time[Minutes]=DoTime[Minutes] then ExecuteTimedMove
+		Case SecsMinsHrs
+			If Time[Hours]=DoTime[Hours] AND Time[Minutes]=DoTime[Minutes] AND Time[Seconds]=DoTime[Seconds] then ExecuteTimedMove
+	End Select
+
+	gosub		CorrectPosition
+	pause		1
+	goto		TimedMoveLoop					; keep waiting
+ExecuteTimedMove:
+	Setpoint_L= Setpoint_L + Steps_L
+	gosub		CorrectPosition
+	if limit=Yes AND AtLimit=SwitchDirection then Steps_L = -Steps_L	; switch direction if desired
+	goto		TimedMoveMode
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; State Rotate Mode (OpMode=7)
+StateRotateMode:	
+	gosub		GivePICBus					; make sure PIC has the bus
+	gosub		TurnMotorOn					; make sure motor is enabled
+	FeedbackOn= No							; can't have feedback on in this  mode
+	gosub		ClearLCD
+	gosub		StateRotateDisplay
+StateRotateLoop:
+    gosub		CheckForModeChange                          ; abort correction process by changing the mode
+	If ExtTrigger=State then	Setpoint_L = Setpoint_L + Rotate_L*C		; change setpoint if trigger input is correct state
+    gosub       CorrectPosition
+	if limit=Yes AND AtLimit=SwitchDirection then Rotate_L = -Rotate_L	; switch direction if desired
+	for j=0 to Delay_W-MinDelay+1										; delay a bit...
+		pause 1
+	next j
+	goto		StateRotateLoop
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Triggered Shutter (OpMode=8) CUSTOM CONFIGURED FOR JONGSEOK'S FAST SHUTTER
+TriggeredShutterMode:
+	gosub		GivePICBus						; make sure PIC has the bus
+	gosub		TurnMotorOn						; make sure motor is enabled
+	gosub		ClearLCD		
+	gosub		ClearCounters					; clear the two timers (TMR0 and TMR3), the sum of which is the trigger count
+	Home_L	=	Position_L						; home is where the heart is
+	gosub		GetTriggers	
+	gosub		TriggeredShutterDisplay
+TriggeredShutterLoop1:
+    gosub		CheckForModeChange                          ; abort correction process by changing the mode
+	gosub		GetTriggers
+	gosub		UpdateTriggers
+	If Triggers_W >= DoTriggers_W then ExecuteTriggeredShutterMove
+    gosub       CorrectPosition
+	goto		TriggeredShutterLoop1			; or wait for next trigger	
+ExecuteTriggeredShutterMove:
+	Setpoint_L = Home_L + Steps_L
+	gosub		CorrectPosition
+	gosub		ClearCounters					; clear the trigger counters
+TriggeredShutterLoop2:
+    gosub		CheckForModeChange                          ; abort correction process by changing the mode
+	gosub		GetTriggers
+	gosub		UpdateTriggers
+	If Triggers_W >= DoTriggers_W then ExecuteTriggeredShutterReturn
+    gosub       CorrectPosition
+	goto		TriggeredShutterLoop2
+ExecuteTriggeredShutterReturn:
+	Setpoint_L = Home_L
+	gosub		CorrectPosition
+	gosub		ClearCounters					; clear the trigger counters
+goto	TriggeredShutterLoop1
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; State Shutter (OpMode=9)
+StateShutterMode:
+	gosub		GivePICBus					; make sure PIC has the bus
+	gosub		TurnMotorOn					; make sure motor is enabled
+	gosub		ClearLCD
+	Home_L	=	Position_L					; home is where the heart is
+	gosub		StateShutterDisplay
+StateShutterLoop:
+    gosub   CheckForModeChange                          ; abort correction process by changing the mode
+	If ExtTrigger=0 then
+		Setpoint_L = Home_L
+	Else
+		Setpoint_L = Home_L + Steps_L		; steps can be negative!
+	EndIf
+	gosub		CorrectPosition
+	goto		StateShutterLoop			; shutter modes only loop forever
+
+
+;Disable Interrupt					; disable interrupts below this
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; SUBROUTINES ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	
+CorrectPosition:
+	B = BusControl										; save off who has the bus (pic or external)
+CorrectPositionLoop:
+	If FeedbackOn=Yes then
+		gosub	GetPosition								; get current position from feedback monitor
+	EndIf												; otherwise assume motor is where it thinks (from past step taking)
+	gosub		UpdateDisplay							; uncomment to update the position during the move/goto (makes it slow though)
+
+	If Left=0 AND Right=0 then									; can abandon task by pressing both buttons at once
+		TempPosition_L = Position_L + 1							; ensure display updates
+		goto	ExitCorrectPosition
+	EndIf
+	If EnableDrive=No then ExitCorrectPosition					; exit if motor is disabled
+	If abs(Setpoint_L-Position_L)<C then ExitCorrectPosition	; nothing to do!  step error is less than a single step
+
+
+	limit = No													; take a step to correct any position error:
+	gosub		GivePICbus										; else there is a step error that requires correcting
+	If Position_L<Setpoint_L then								; take the step
+		If Position_L+C>MaxPos_L then
+			Setpoint_L = Position_L
+			limit = Yes
+		Else
+			gosub	StepPos
+			limit = No
+		EndIf
+	Else
+		If Position_L-C<=MinPos_L then
+			Setpoint_L = Position_L
+			limit = Yes
+		Else
+			gosub	StepNeg
+			limit = No
+		EndIf
+	EndIf		
+;    pause       2                                       ; small delay to allow motor to keep up (make longer if updatedisplay is commented)
+	goto		CorrectPositionLoop						; keep looping until no step error or a limit is reached
+
+ExitCorrectPosition:
+    gosub       SavePosition							; save the current position
+	BusControl = B										; restore ownership of the bus
+Return
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+WaitUntilExtTriggerIsLow:
+	While ExtTrigger = 1
+        gosub   CheckForModeChange
+		pause 1
+	Wend
+Return
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+WaitUntilExtTriggerIsHigh:
+	While ExtTrigger = 0
+        gosub   CheckForModeChange
+		pause 1
+	Wend
+Return
+
+
+;****************************************************************************
+;****************************************************************************
+;****************************************************************************
+Disable Interrupt					; disable interrupts below this
+
+CheckForModeChange:
+    If Left=0 AND Right=0 then
+        OpMode=OpMode+1
+        If OpMode > StateShutter then OpMode=0
+        Setpoint_L = Position_L
+		TempPosition_L = Position_L + 1		; ensure display updates
+        gosub   EnableInterrupts
+		pause	50
+        pop
+        goto    Main
+    EndIf
+	for i=0 to 9
+		pause 1
+	next i
+Return
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+StepPos:
+	PicDirection = Pos				; choose the right direction
+	PicStep = 0
+	pauseus 1
+	PicStep = 1
+	pauseus 1
+	PicStep = 0
+	pauseus 1
+	If FeedbackOn=No then			; if feedback is on, position is determined from rotary sensor
+		Position_L = Position_L+C	; if not, incremented when we take a step
+	EndIf
+Return
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+StepNeg:
+	PicDirection = Neg				; choose the right direction
+	PicStep = 0						; ensure stepping trigger is low
+	pauseus 1
+	PicStep = 1
+	pauseus 1
+	PicStep = 0
+	pauseus 1
+	If FeedbackOn=No then			; if feedback is on, position is determined from rotary sensor
+		Position_L = Position_L-C	; if not, decremented when we take a step
+	EndIf
+Return
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Read the value stored by the HCTL-2021 rotary counter
+ReadCounter:
+	ReadCounter_	= 	0			; enable HCTL output drivers
+	DataSelect 		= 	0			; reading high byte first
+	pauseus				1
+	Change_W.highbyte = DataBus		; assign high byte
+	pauseus				1
+	DataSelect		= 	1			; reading low byte next
+	pauseus	10
+	Change_W.lowbyte = DataBus		; assign low byte
+	DataSelect		= 	0
+	ReadCounter_	= 	1			; disable HCTL output drivers
+Return
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Reset the rotary encoder/counter
+ResetCounter:
+	ResetCounter_ = 0
+	pauseus 1
+	ResetCounter_ = 1
+	pauseus 1
+Return
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; rotary encoder is set for 800 counter/revolution and hctl-2021 counter multiplies by 4
+; to give 3200 counts per revolution, so 1 step = 16 counts
+GetPosition:
+	gosub		ReadCounter
+	If Change_W!=0 then									; Change is 16*steps
+		gosub	ResetCounter
+		If Change_W.15=1 then 
+			Change_W = abs Change_W
+			Position_L = Position_L-Change_W		
+		Else
+			Position_L = Position_L+Change_W
+		EndIf
+	EndIf												; nothing to do to position if feedback is off
+Return													
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+GivePicBus:
+	PicStep = 0				; ensure the pic trigger output signal is low
+	BusControl = 1			; and give PIC control of the direction (CW/!CCW) and stepping signal (STEP)
+Return
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+GiveExtBus:		
+	gosub	WaitUntilExtTriggerIsLow	; wait until low to avoid giving a trigger on transition		
+	BusControl = 0
+Return
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+GetTriggers:							; in triggered mode, one of the two counters will count incoming rising edges 
+	Triggers_W = TMR0H*256 + TMR0L + TMR1H*256 + TMR1L
+Return
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ClearCounters:
+	TMR0H = 0				; load the counter registers with zeros
+	TMR0L = 0
+	TMR1H = 0
+	TMR1L = 0
+return
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+TurnMotorOn:
+	EnableDrive = Yes
+Return
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+TurnMotorOff:
+	EnableDrive = No
+Return
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ConfigureMotor:
+	ResetDrive_	=	1					; not resetting the driver
+	EnableDrive	=	0					; disable the motor
+	CNTRL		=	0					; turn off chopper
+	HalfFull_	=	1					; set step style signal
+	ResetDrive_ = 0						; reset the motor driver chip
+	pause	1
+	ResetDrive_ = 1
+	pause	1
+	HalfFull_	=	StepStyle			; implement desired step style
+	EnableDrive	=	1
+Return
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+EnablePushLights:
+	Illuminate = Yes
+Return
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+DisablePushLights:
+	Illuminate = No
+Return
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+Enable Interrupt
+
+end
+
+

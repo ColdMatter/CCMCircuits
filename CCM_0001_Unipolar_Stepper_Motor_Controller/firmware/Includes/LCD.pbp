@@ -1,0 +1,544 @@
+Disable Interrupt
+
+
+; Internal tasks for LCD
+SetCursor		    CON	$45	   	; then send 1 byte, $00-$67 		
+ClearScreen		    CON	$51    	; clears screen and resets cursor to line 1, position 1 
+SetContrast			CON $52		; then send 1 byte (1-50)
+SetBacklight		CON	$53	   	; then send 1 byte (1-8)
+Line1				CON	$00		; line 1 internal address
+Line2				CON	$40		; line 2 internal address
+Line3				CON	$14		; line 3 internal address
+Line4				CON	$54		; line 4 internal address
+
+goto	LCD_Done
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;; SUBROUTINES ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+SetupLCD:		; load custom characters and set lcd parameters
+	I2Cwrite	I2Cdata,I2Cclk,lcdI2Caddress,LCDprefix,[SetContrast,40]
+	pause		5
+	I2Cwrite	I2Cdata,I2Cclk,lcdI2Caddress,LCDprefix,[SetBacklight,8]
+	pause		5
+	gosub		ClearLCD
+Return
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+MotorOffDisplay:
+	gosub		SetCursorLine1
+	I2Cwrite	I2Cdata,I2Cclk,lcdI2Caddress,["Motor Disabled"]
+	gosub		StandardDisplay
+	gosub		SetCursorLine4
+	gosub		PrintTime
+Return
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ManualDisplay:
+	gosub		SetCursorLine1
+	I2Cwrite	I2Cdata,I2Cclk,lcdI2Caddress,["  Manual Operation  "]
+	gosub		StandardDisplay
+	gosub		SetCursorLine4
+	I2Cwrite	I2Cdata,I2Cclk,lcdI2Caddress,["<<-              +>>"]
+Return
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ExternalDisplay:
+	gosub		SetCursorLine1
+	I2Cwrite	I2Cdata,I2Cclk,lcdI2Caddress,[" External Operation "]
+	gosub		StandardDisplay
+	gosub		SetCursorLine4
+	gosub		PrintEmpty
+Return
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+TriggeredGotoDisplay:
+	gosub		SetCursorLine1
+	I2Cwrite	I2Cdata,I2Cclk,lcdI2Caddress,["Trig. Goto "]
+	Characters = 11
+	Number_L = 	Destination_L
+	gosub		WriteNumber_L
+	gosub		FillLine
+	gosub		StandardDisplay
+	gosub		SetCursorLine4
+	gosub		PrintTriggers
+Return
+
+UpdateTriggers:
+	B = Line4 + 10
+	I2Cwrite	I2Cdata,I2Cclk,lcdI2Caddress,LCDprefix,[SetCursor,B]
+	Number_W = 	Triggers_W
+	gosub		WriteNumber_W
+	gosub		WriteSlash
+	Number_W =	DoTriggers_W
+	gosub		WriteNumber_W
+	gosub		WriteSpace
+	gosub		WriteSpace
+Return
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+TimedGotoDisplay:
+	gosub		SetCursorLine1
+	I2Cwrite	I2Cdata,I2Cclk,lcdI2Caddress,["Timed Goto "]
+	Characters = 11
+	Number_L = 	Destination_L
+	gosub		WriteNumber_L
+	gosub		FillLine
+	gosub		StandardDisplay						; position and feedback on lines 2 and 3
+	gosub		SetCursorLine4
+	gosub		PrintTimes
+Return
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+StandardDisplay:
+	gosub		SetCursorLine2
+	gosub		PrintPosition			; current position based on how many steps the motor thinks it has taken
+	gosub		SetCursorLine3
+	gosub		PrintEmpty
+Return
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+PrintTimes:
+	gosub		WriteTime
+	gosub		WriteSpace
+	gosub		WriteSlash
+	gosub		WriteSpace
+	gosub		WriteDoTime
+	gosub		FillLine
+Return
+
+
+WriteSteps:
+	Number_L = 	Steps_L
+	gosub		WriteNumber_L
+Return
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+TriggeredMoveDisplay:
+	gosub		SetCursorLine1
+	I2Cwrite	I2Cdata,I2Cclk,lcdI2Caddress,["Trig. Move "]
+	Characters = 11
+	gosub		WriteSteps
+	gosub		FillLine
+	gosub		StandardDisplay
+	gosub		SetCursorLine4
+	gosub		PrintTriggers
+Return
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+TimedMoveDisplay:			
+	gosub		SetCursorLine1
+	I2Cwrite	I2Cdata,I2Cclk,lcdI2Caddress,["Timed Move "]
+	Characters = 11
+	gosub		WriteSteps
+	gosub		FillLine
+	gosub		StandardDisplay	
+	gosub		SetCursorLine4
+	gosub		PrintTimes
+Return
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+StateRotateDisplay:
+	gosub		SetCursorLine1
+	I2Cwrite	I2Cdata,I2Cclk,lcdI2Caddress,["    State Rotate    "]
+	gosub		StandardDisplay
+	gosub		SetCursorLine4
+	gosub		PrintEmpty
+Return
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+TriggeredShutterDisplay:
+	gosub		SetCursorLine1
+	I2Cwrite	I2Cdata,I2Cclk,lcdI2Caddress,[" Triggered Shutter  "]
+	gosub		StandardDisplay
+	gosub		SetCursorLine4
+	gosub		PrintTriggers
+Return
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+PrintTriggers:
+	I2Cwrite	I2Cdata,I2Cclk,lcdI2Caddress,["Triggers: "]
+	Characters = 10
+	Number_W = 	Triggers_W
+	gosub		WriteNumber_W
+	gosub		WriteSlash
+	Number_W =	DoTriggers_W
+	gosub		WriteNumber_W
+	gosub		FillLine
+Return
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+StateShutterDisplay:
+	gosub		SetCursorLine1
+	I2Cwrite	I2Cdata,I2Cclk,lcdI2Caddress,["   State Shutter    "]
+	gosub		StandardDisplay
+	gosub		SetCursorLine4
+	gosub		PrintEmpty
+Return
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+WriteTime:
+	Number_W 	=	Time[Hours]
+	gosub		WriteNumber_W
+	gosub		WriteColon
+	Number_W 	= 	Time[Minutes]
+	If Number_W < 10 then
+		gosub	WriteZero
+	EndIf
+	gosub		WriteNumber_W
+	gosub		WriteColon
+	Number_W 	= 	Time[Seconds]
+	If Number_W < 10 then
+		gosub	WriteZero
+	EndIf
+	gosub	WriteNumber_W
+Return
+
+PrintTime:
+	Characters = 0
+	gosub	WriteTime
+	gosub	FillLine
+Return
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+WriteDoTime:							; print execution time 
+	Number_W 	=	DoTime[Hours]
+	gosub		WriteNumber_W
+	gosub		WriteColon
+	Number_W 	= 	DoTime[Minutes]
+	If Number_W < 10 then
+		gosub	WriteZero
+	EndIf
+	gosub		WriteNumber_W
+	gosub		WriteColon
+	Number_W 	= 	DoTime[Seconds]
+	If Number_W < 10 then
+		gosub	WriteZero
+	EndIf
+	gosub	WriteNumber_W
+Return
+
+PrintDoTime:
+	Characters = 0
+	gosub	WriteDoTime
+	gosub	FillLine
+Return
+
+WriteZero:
+	I2Cwrite	I2Cdata,I2Cclk,lcdI2Caddress,["0"]
+	Characters = Characters + 1
+Return	
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; update the position (line 2) as the motor moves...
+UpdateDisplay:
+    gosub       SetCursorLine2
+    gosub       PrintPosition
+;	If FeedbackOn=Yes then
+;		B = Line2 + 11
+;	Else
+;		B = Line2 + 10
+;	EndIf
+;	I2Cwrite	I2Cdata,I2Cclk,lcdI2Caddress,LCDprefix,[SetCursor,B]
+;	Number_L =	Position_L
+;	gosub		WriteNumber_L
+;	gosub		WriteSpace
+Return
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+PrintPosition:
+	If TempFeedbackOn != FeedbackOn OR TempPosition_L != Position_L then
+		gosub		SetCursorLine2
+		If FeedbackOn=Yes then
+			I2Cwrite	I2Cdata,I2Cclk,lcdI2Caddress,["Position*: "]
+			Characters = 11
+		Else
+			I2Cwrite	I2Cdata,I2Cclk,lcdI2Caddress,["Position: "]
+			Characters = 10
+		EndIf
+		Number_L = 	Position_L
+		gosub		WriteNumber_L
+		If (Position_L+C>=MaxPos_L) OR (Position_L-C<=MinPos_L) then  ; indicate motor at limit
+			gosub   WriteSpace
+			gosub   WriteExclamation
+		EndIf
+		gosub		FillLine
+		TempPosition_L = Position_L
+		TempFeedbackOn = FeedbackOn
+	EndIf
+Return
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+PrintSetpoint:
+	If TempSetpoint_L != Setpoint_L then
+		I2Cwrite	I2Cdata,I2Cclk,lcdI2Caddress,["Setpoint: "]
+		Characters = 10
+		Number_L =	Setpoint_L
+		gosub		WriteNumber_L
+		gosub		FillLine
+		TempSetpoint_L = Setpoint_L
+	EndIf
+Return
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+PrintEmpty:
+	Characters = 0
+	gosub	FillLine
+Return
+
+WriteNumber_L:
+	L = Number_L/C             ; convert internal counts to user steps
+	If L<0 then
+		gosub	WriteNegative
+		L = abs L
+	EndIf	
+	If L > 999999 then
+		millions = L/1000000
+		hundredthousands = (L-1000000*millions)/100000	 									
+		tenthousands = (L-1000000*millions-100000*hundredthousands)/10000	
+		thousands = (L-1000000*millions-100000*hundredthousands-10000*tenthousands)/1000													
+		hundreds = (L-1000000*millions-100000*hundredthousands-10000*tenthousands-1000*thousands)/100									
+		tens = (L-1000000*millions-100000*hundredthousands-10000*tenthousands-1000*thousands-100*hundreds)/10				
+		ones = L-1000000*millions-100000*hundredthousands-10000*tenthousands-1000*thousands-100*hundreds-10*tens
+		Decimal = millions
+		gosub	WriteDecimal
+		Decimal = hundredthousands
+		gosub	WriteDecimal
+		Decimal = tenthousands
+		gosub	WriteDecimal
+		Decimal = thousands
+		gosub	WriteDecimal
+		Decimal = hundreds
+		gosub	WriteDecimal
+		Decimal = tens
+		gosub	WriteDecimal
+		Decimal = ones
+		gosub	WriteDecimal
+		return
+	EndIf	
+	If L > 99999 then
+		hundredthousands = L/100000	 									
+		tenthousands = (L-100000*hundredthousands)/10000	
+		thousands = (L-100000*hundredthousands-10000*tenthousands)/1000													
+		hundreds = (L-100000*hundredthousands-10000*tenthousands-1000*thousands)/100									
+		tens = (L-100000*hundredthousands-10000*tenthousands-1000*thousands-100*hundreds)/10				
+		ones = L-100000*hundredthousands-10000*tenthousands-1000*thousands-100*hundreds-10*tens
+		Decimal = hundredthousands
+		gosub	WriteDecimal
+		Decimal = tenthousands
+		gosub	WriteDecimal
+		Decimal = thousands
+		gosub	WriteDecimal
+		Decimal = hundreds
+		gosub	WriteDecimal
+		Decimal = tens
+		gosub	WriteDecimal
+		Decimal = ones
+		gosub	WriteDecimal
+		return
+	EndIf
+	If L > 9999 then
+		tenthousands = L/10000	
+		thousands = (L-10000*tenthousands)/1000													
+		hundreds = (L-10000*tenthousands-1000*thousands)/100									
+		tens = (L-10000*tenthousands-1000*thousands-100*hundreds)/10				
+		ones = L-10000*tenthousands-1000*thousands-100*hundreds-10*tens
+		Decimal = tenthousands
+		gosub	WriteDecimal
+		Decimal = thousands
+		gosub	WriteDecimal
+		Decimal = hundreds
+		gosub	WriteDecimal
+		Decimal = tens
+		gosub	WriteDecimal
+		Decimal = ones
+		gosub	WriteDecimal
+		return
+	EndIf
+	If L > 999 then
+		thousands = L/1000													
+		hundreds = (L-1000*thousands)/100									
+		tens = (L-1000*thousands-100*hundreds)/10				
+		ones = L-1000*thousands-100*hundreds-10*tens
+		Decimal = thousands
+		gosub	WriteDecimal
+		Decimal = hundreds
+		gosub	WriteDecimal
+		Decimal = tens
+		gosub	WriteDecimal
+		Decimal = ones
+		gosub	WriteDecimal
+		return
+	EndIf
+	If L > 99 then
+		hundreds = L/100									
+		tens = (L-100*hundreds)/10				
+		ones = L-100*hundreds-10*tens
+		Decimal = hundreds
+		gosub	WriteDecimal
+		Decimal = tens
+		gosub	WriteDecimal
+		Decimal = ones
+		gosub	WriteDecimal
+		return
+	EndIf
+	If L > 9 then				; 2 significant figures
+		tens = L/10				
+		ones = L-10*tens
+		Decimal = tens
+		gosub	WriteDecimal
+		Decimal = ones
+		gosub	WriteDecimal
+		return
+	EndIf
+	Decimal = L					; 1 significant figure
+	gosub	WriteDecimal
+Return
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+WriteNumber_W:
+	If Number_W.15=1 then
+		gosub	WriteNegative
+		W = abs Number_W
+	Else
+		W = Number_W
+	EndIf	 									
+	tenthousands = W/10000
+	thousands = (W-10000*tenthousands)/1000													
+	hundreds = (W-10000*tenthousands-1000*thousands)/100									
+	tens = (W-10000*tenthousands-1000*thousands-100*hundreds)/10				
+	ones = W-10000*tenthousands-1000*thousands-100*hundreds-10*tens
+	If W > 9999 then
+		Decimal = tenthousands
+		gosub	WriteDecimal
+		Decimal = thousands
+		gosub	WriteDecimal
+		Decimal = hundreds
+		gosub	WriteDecimal
+		Decimal = tens
+		gosub	WriteDecimal
+		Decimal = ones
+		gosub	WriteDecimal
+		return
+	endif
+	if W > 999	then		; 4 significant figures
+		Decimal = thousands
+		gosub	WriteDecimal
+		Decimal = hundreds
+		gosub	WriteDecimal
+		Decimal = tens
+		gosub	WriteDecimal
+		Decimal = ones
+		gosub	WriteDecimal
+		return
+	endif
+	if  W > 99	then		; 3 significant figures
+		Decimal = hundreds
+		gosub	WriteDecimal
+		Decimal = tens
+		gosub	WriteDecimal
+		Decimal = ones
+		gosub	WriteDecimal
+		return
+	endif
+	if 	W > 9		then		; 2 significant figures
+		Decimal = tens
+		gosub	WriteDecimal
+		Decimal = ones
+		gosub	WriteDecimal
+		return
+	endif
+	Decimal = ones				; 1 significant figure
+	gosub	WriteDecimal
+Return
+
+
+FillLine:											; fill line with empty spaces based on the value of the 'Characters' variable
+    If Characters < 20 then
+        NumSpaces = 20-Characters
+        gosub	WriteSpaces
+    EndIf
+Return
+
+WriteDecimal:											; set byte 'D' before entering this subroutine, 0-9 valid range
+	Ascii	=	"?"										; remains this value if D not found in the list... (D>9)
+	Lookup	Decimal,["0123456789"],Ascii				; A assigned to Dth element in the string
+	I2Cwrite	I2Cdata,I2Cclk,lcdI2Caddress,[Ascii]	; and write to LCD screen
+	Characters = Characters + 1
+Return
+
+ClearLCD:
+	I2Cwrite	I2Cdata,I2Cclk,lcdI2Caddress,LCDprefix,[ClearScreen]
+	pause		5		; command takes 1.5ms to complete, but the LCD seems cranky
+	Characters = 0
+Return
+
+WriteSlash:
+	I2Cwrite	I2Cdata,I2Cclk,lcdI2Caddress,["/"]
+	Characters = Characters + 1
+Return
+
+WritePercent:
+	I2Cwrite	I2Cdata,I2Cclk,lcdI2Caddress,["%"]
+	Characters = Characters + 1
+Return
+
+WriteSpace:
+	I2Cwrite	I2Cdata,I2Cclk,lcdI2Caddress,[" "]
+	Characters = Characters + 1
+Return
+
+WriteExclamation:
+	I2Cwrite	I2Cdata,I2Cclk,lcdI2Caddress,["!"]
+	Characters = Characters + 1
+Return
+
+WriteColon:
+	I2Cwrite	I2Cdata,I2Cclk,lcdI2Caddress,[":"]
+	Characters = Characters + 1
+Return
+
+WriteAsterisk:
+	I2Cwrite	I2Cdata,I2Cclk,lcdI2Caddress,["*"]
+	Characters = Characters + 1
+Return
+
+WriteNegative:
+	I2Cwrite	I2Cdata,I2Cclk,lcdI2Caddress,["-"]
+	Characters = Characters + 1
+Return
+
+WriteSpaces:					; set variable NumSpaces before calling this subroutine
+	For j=1 to NumSpaces
+		gosub	WriteSpace
+	next j
+Return
+
+SetCursorLine1:
+	I2Cwrite	I2Cdata,I2Cclk,lcdI2Caddress,LCDprefix,[SetCursor,Line1]
+	Characters = 0
+	pause		2
+Return
+
+SetCursorLine2:
+	I2Cwrite	I2Cdata,I2Cclk,lcdI2Caddress,LCDprefix,[SetCursor,Line2]
+	Characters = 0
+	pause		2
+Return
+
+SetCursorLine3:
+	I2Cwrite	I2Cdata,I2Cclk,lcdI2Caddress,LCDprefix,[SetCursor,Line3]
+	Characters = 0
+	pause		2
+Return
+
+SetCursorLine4:
+	I2Cwrite	I2Cdata,I2Cclk,lcdI2Caddress,LCDprefix,[SetCursor,Line4]
+	Characters = 0
+	pause		2
+Return
+
+LCD_Done:
+
+Enable Interrupt

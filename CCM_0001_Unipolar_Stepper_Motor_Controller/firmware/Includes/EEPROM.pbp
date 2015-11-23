@@ -1,0 +1,39 @@
+Disable Interrupt
+
+; One of the peripherals on the I2C bus is a 24AA1025 1MB external EEPROM chip
+; This is used to store:
+;
+; The EEPROM chip has two "banks" of memory which allows for 8-bit addressing,
+; since we are not pressed on memory space we only use the bottom bank
+; The two banks actually have different I2C addresses
+
+goto	EEPROM_Done						; jump over subroutines so they don't evaluate on startup
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; SUBROUTINES ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+SaveSettings:												; save off current variable settings to EEPROM to reload (if power is removed and then restored)
+	eeAddress = 0
+	I2CWRITE I2Cdata,I2Cclk,eeI2Cbot,eeAddress,[Position_L,OpMode,Delay_W,Setpoint_L,Destination_L,MinPos_L,MaxPos_L,_
+												DoTriggers_W,STR DoTime \TimeLength,Steps_L,Rotate_L,FeedbackOn,StepStyle,AtLimit,State]
+	pause	10
+Return
+
+RestoreSettings:
+	eeAddress = 0						
+	I2CREAD I2Cdata,I2Cclk,eeI2Cbot,eeAddress,[Position_L,OpMode,Delay_W,Setpoint_L,Destination_L,MinPos_L,MaxPos_L,_
+												DoTriggers_W,STR DoTime \TimeLength,Steps_L,Rotate_L,FeedbackOn,StepStyle,AtLimit,State]																																			;
+Return
+
+
+SavePosition:												; save off just the position
+	eeAddress = 0
+	I2CWRITE I2Cdata,I2Cclk,eeI2Cbot,eeAddress,[Position_L]
+Return
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+EEPROM_Done:
+
+Enable Interrupt

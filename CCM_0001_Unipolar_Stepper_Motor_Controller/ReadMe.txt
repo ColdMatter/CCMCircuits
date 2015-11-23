@@ -1,0 +1,1 @@
+To configure a blank board, flash the PIC and run the FTDI chip configure batch file/utility (ftdi/stepper_ftdi_config.bat).     

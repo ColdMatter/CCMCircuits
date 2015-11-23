@@ -1,0 +1,55 @@
+\contentsline {section}{\numberline {1}System Overview}{4}{section.1}
+\contentsline {subsection}{\numberline {1.1}Hardware}{4}{subsection.1.1}
+\contentsline {subsection}{\numberline {1.2}Open vs. Closed Loop Operation}{4}{subsection.1.2}
+\contentsline {section}{\numberline {2}GUI}{5}{section.2}
+\contentsline {subsection}{\numberline {2.1}Basic Operation}{5}{subsection.2.1}
+\contentsline {subsection}{\numberline {2.2}Advanced Operation}{6}{subsection.2.2}
+\contentsline {subsubsection}{\numberline {2.2.1}Motor Disabled (0)}{6}{subsubsection.2.2.1}
+\contentsline {subsubsection}{\numberline {2.2.2}Manual (1)}{7}{subsubsection.2.2.2}
+\contentsline {subsubsection}{\numberline {2.2.3}External (2)}{7}{subsubsection.2.2.3}
+\contentsline {subsubsection}{\numberline {2.2.4}Triggered Goto (3)}{8}{subsubsection.2.2.4}
+\contentsline {subsubsection}{\numberline {2.2.5}Timed Goto (4)}{8}{subsubsection.2.2.5}
+\contentsline {subsubsection}{\numberline {2.2.6}Triggered Move (5)}{8}{subsubsection.2.2.6}
+\contentsline {subsubsection}{\numberline {2.2.7}Timed Move (6)}{8}{subsubsection.2.2.7}
+\contentsline {subsubsection}{\numberline {2.2.8}State-Based Rotation (7)}{8}{subsubsection.2.2.8}
+\contentsline {subsubsection}{\numberline {2.2.9}Triggered Shutter (8)}{8}{subsubsection.2.2.9}
+\contentsline {subsubsection}{\numberline {2.2.10}State Shutter (9)}{9}{subsubsection.2.2.10}
+\contentsline {section}{\numberline {3}Serial Communication}{10}{section.3}
+\contentsline {subsection}{\numberline {3.1}Available Commands}{11}{subsection.3.1}
+\contentsline {subsubsection}{\numberline {3.1.1}report}{12}{subsubsection.3.1.1}
+\contentsline {subsubsection}{\numberline {3.1.2}default}{12}{subsubsection.3.1.2}
+\contentsline {subsubsection}{\numberline {3.1.3}save}{13}{subsubsection.3.1.3}
+\contentsline {subsubsection}{\numberline {3.1.4}home}{13}{subsubsection.3.1.4}
+\contentsline {subsubsection}{\numberline {3.1.5}reboot}{13}{subsubsection.3.1.5}
+\contentsline {subsubsection}{\numberline {3.1.6}move}{13}{subsubsection.3.1.6}
+\contentsline {subsubsection}{\numberline {3.1.7}goto}{13}{subsubsection.3.1.7}
+\contentsline {subsubsection}{\numberline {3.1.8}max}{13}{subsubsection.3.1.8}
+\contentsline {subsubsection}{\numberline {3.1.9}min}{13}{subsubsection.3.1.9}
+\contentsline {subsubsection}{\numberline {3.1.10}delay}{14}{subsubsection.3.1.10}
+\contentsline {subsubsection}{\numberline {3.1.11}feedback}{14}{subsubsection.3.1.11}
+\contentsline {subsubsection}{\numberline {3.1.12}mode}{14}{subsubsection.3.1.12}
+\contentsline {subsubsection}{\numberline {3.1.13}steps}{14}{subsubsection.3.1.13}
+\contentsline {subsubsection}{\numberline {3.1.14}triggers}{15}{subsubsection.3.1.14}
+\contentsline {subsubsection}{\numberline {3.1.15}goal}{15}{subsubsection.3.1.15}
+\contentsline {subsubsection}{\numberline {3.1.16}hours}{15}{subsubsection.3.1.16}
+\contentsline {subsubsection}{\numberline {3.1.17}minutes}{15}{subsubsection.3.1.17}
+\contentsline {subsubsection}{\numberline {3.1.18}seconds}{15}{subsubsection.3.1.18}
+\contentsline {subsubsection}{\numberline {3.1.19}dohours}{15}{subsubsection.3.1.19}
+\contentsline {subsubsection}{\numberline {3.1.20}dominutes}{15}{subsubsection.3.1.20}
+\contentsline {subsubsection}{\numberline {3.1.21}doseconds}{16}{subsubsection.3.1.21}
+\contentsline {subsubsection}{\numberline {3.1.22}repeat}{16}{subsubsection.3.1.22}
+\contentsline {subsubsection}{\numberline {3.1.23}rotate}{16}{subsubsection.3.1.23}
+\contentsline {subsubsection}{\numberline {3.1.24}behave}{16}{subsubsection.3.1.24}
+\contentsline {subsection}{\numberline {3.2}Configuring Predefined Operation Modes via USB}{16}{subsection.3.2}
+\contentsline {subsubsection}{\numberline {3.2.1}Configuring ``Off'' Mode}{17}{subsubsection.3.2.1}
+\contentsline {subsubsection}{\numberline {3.2.2}Configuring ``Manual'' Mode}{17}{subsubsection.3.2.2}
+\contentsline {subsubsection}{\numberline {3.2.3}Configuring ``External'' Mode}{17}{subsubsection.3.2.3}
+\contentsline {subsubsection}{\numberline {3.2.4}Configuring ``Triggered Goto'' Mode}{17}{subsubsection.3.2.4}
+\contentsline {subsubsection}{\numberline {3.2.5}Configuring ``Timed Goto'' Mode}{18}{subsubsection.3.2.5}
+\contentsline {subsubsection}{\numberline {3.2.6}Configuring ``Triggered Move'' Mode}{18}{subsubsection.3.2.6}
+\contentsline {subsubsection}{\numberline {3.2.7}Configuring ``Timed Move'' Mode}{19}{subsubsection.3.2.7}
+\contentsline {subsubsection}{\numberline {3.2.8}Configuring ``State Rotate'' Mode}{19}{subsubsection.3.2.8}
+\contentsline {subsubsection}{\numberline {3.2.9}Configuring ``Triggered Shutter'' Mode}{19}{subsubsection.3.2.9}
+\contentsline {subsubsection}{\numberline {3.2.10}Configuring ``State Shutter'' Mode}{20}{subsubsection.3.2.10}
+\contentsline {section}{\numberline {4}Prototype Builds}{21}{section.4}
+\contentsline {section}{\numberline {5}Circuit Schematics}{22}{section.5}

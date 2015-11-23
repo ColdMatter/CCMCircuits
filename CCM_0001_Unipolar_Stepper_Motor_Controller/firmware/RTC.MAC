@@ -1,0 +1,78 @@
+
+	NOLIST
+; PICBASIC PRO(TM) Compiler 3.0.7.4, (c) 1998, 2013 microEngineering Labs, Inc. All Rights Reserved. 
+
+LABEL?L macro Label
+        RST?RP
+    ifdef PM_USED
+        LALL
+Label
+        XALL
+    else
+Label
+    endif
+    endm
+
+GOTO?L macro Label
+        L?GOTO  Label
+    endm
+
+I2CCLOCK?C macro Cin
+        movlw   Cin
+        L?CALL  PINR2
+    endm
+PINR2_USED = 1
+
+I2CDATA?C macro Cin
+        movlw   Cin
+        L?CALL  PINR1
+    endm
+PINR1_USED = 1
+
+I2CWRITE?C macro Cin
+    if ((high (Cin)) != 0)
+        movlw   (Cin) >> 8
+        L?CALL  I2CWRITE
+    endif
+        MOVE?CA low (Cin)
+        L?CALL  I2CWRITE
+    endm
+I2CWRITE_USED = 1
+
+IDISABLE? macro
+    endm
+
+IENABLE? macro
+    endm
+
+PAUSE?C macro Cin
+    if (((Cin) >> 8) == 0)
+        MOVE?CA Cin
+        L?CALL  PAUSEB
+    else
+      if (((Cin) >> 16) == 0)
+        MOVE?CB high (Cin), R1 + 1
+        MOVE?CA low (Cin)
+        L?CALL  PAUSEW
+      else
+        MOVE?CB (Cin) >> 24, R1 + 3
+        MOVE?CB upper (Cin), R1 + 2
+        MOVE?CB high (Cin), R1 + 1
+        MOVE?CA low (Cin)
+        L?CALL  PAUSE
+      endif
+    endif
+    endm
+PAUSE_USED = 1
+
+RETURN? macro
+    ifdef DEBUG_STACK
+        CHK?RP  DEBUG_STACK
+        decf    DEBUG_STACK, F
+    endif
+        RST?RP
+        return
+    endm
+
+
+	LIST

@@ -1,0 +1,57 @@
+Disable Interrupt
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+'DEVICE CONFIGURATION (INTERNAL FUSES)
+; THESE ARE NOT USED IF THE BOOTLOADER IS PRESENT ON THE DEVICE
+; IF THE BOOTLOADER IS USED, SET THE CONFIGURATION FUSES THERE (make sure they match these!)
+; The config directive is in assembly language, so comments need a ";", not a "'"
+#CONFIG							; See P18F46K80.INC in the MPLAB folder for options
+	config	RETEN 	= OFF  	 	; Ultra low-power regulator is Disabled 
+	config	INTOSCSEL = LOW		; LF-INTOSC in Low-power mode during Sleep
+	config	SOSCSEL = DIG   	; RC0/RC1 are digital pins 
+    CONFIG 	XINST  	= OFF		; Extra instruction set turned off
+	CONFIG 	FOSC   	= HS1		; low speed oscillator (4 MHz)	
+	CONFIG	PLLCFG 	= OFF  	 	; phase locked loop (x4) turned off    
+	CONFIG	FCMEN	= OFF  		; fail-safe clock monitor turned off
+	CONFIG	IESO	= OFF		; internal/external oscillator switch over mode turned off
+	CONFIG	PWRTEN 	= ON 		; power up timer enable     
+	CONFIG	BORV   	= 3     	; 1.8V brown out reset voltage 
+	CONFIG	BOREN	= ON		; brown out detect on and controlled by SBOREN bit
+	CONFIG	BORPWR	= LOW		; brown out monitor set to low power level
+	CONFIG 	WDTEN  	= OFF		; Turn off the watch dog timer
+	CONFIG	WDTPS	= 32768		; watch-dog postscaler (doesn't matter, its turned off)
+	CONFIG	CANMX	= PORTB		; ECAN RX/TX located on RB2/RB3 for 44 pin devices (not used)
+;	CONFIG	T0CKMX	= PORTG		; timer0 gets clock source from RG4 (64 pin devices only)
+;	CONFIG	T3CKMX  = PORTB		; timer3 gets clock source from RB5 (64 pin devices only) 
+	CONFIG	MSSPMSK = MSK5		; mssp address masking in 5 bit mode (not used)
+	CONFIG	MCLRE  	= ON    	; MCLR Enabled, RG5 disabled (cannot be used as input/output)
+	CONFIG	STVREN 	= ON    	; Stack overflow reset enabled
+	config	BBSIZ 	= BB2K		; Boot Block Size is 2K words
+	config	CP0 	= OFF		; Code Protect 00800-03FFF
+	config	CP1 	= OFF		; Code Protect 04000-07FFF
+	config	CP2		= OFF		; Code Protect 08000-0BFFF
+	config	CP3 	= OFF		; Code Protect 0C000-0FFFF
+	config	CPB 	= OFF		; Code Protect Boot
+	config	CPD 	= OFF		; Data EE Read Protect
+	config	WRT0 	= OFF		; Table Write Protect 00800-03FFF
+	config	WRT1 	= OFF		; Table Write Protect 04000-07FFF
+	config	WRT2 	= OFF		; Table Write Protect 08000-0BFFF
+	config	WRT3 	= OFF		; Table Write Protect 0C000-0FFFF
+	config	WRTC 	= OFF		; Config. Write Protect
+	config	WRTB 	= OFF		; Table Write Protect Boot
+	config	WRTD 	= OFF		; Data EE Write Protect
+	config	EBTR0 	= OFF		; Table Read Protect 00800-03FFF	
+	config	EBTR1 	= OFF		; Table Read Protect 04000-07FFF
+	config	EBTR2 	= OFF		; Table Read Protect 08000-0BFFF
+	config	EBTR3	= OFF		; Table Read Protect 0C000-0FFFF
+	config	EBTRB 	= OFF   	; Table Read Protect Boot
+#ENDCONFIG
+
+Enable Interrupt
+
+
+
+
+
+
+
+

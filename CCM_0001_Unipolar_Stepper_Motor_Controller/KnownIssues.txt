@@ -1,0 +1,6 @@
+Known issues with RevA and planned changes for RevB:
+
+-- HARDWARE:
+-- Somehow I forgot a 10k pullup on the MCLR_ pin to 5V.  You'll need to add one manually in order for the PIC to run.
+-- The USB connector is backwards with respect to the commercial cable, be careful you don't plug it in as is. 
+-- For the next revision, it would be nice to control the Vref pin of the L297 driver from an analog output on the PIC (variable power).    

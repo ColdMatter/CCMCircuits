@@ -1,0 +1,92 @@
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Some generic definitions of internal PIC register bits (device file only has register definitions)
+
+; Interrupt Control Register 1 (INTCON)
+GIE 		VAR	INTCON.7	; 1 = enables global interrupts (not using interrupt priority)
+PEIE		VAR	INTCON.6	; 1 = enables all peripheral interrupts (PEIE)
+TMR0IE		VAR	INTCON.5	; timer0 overflow interrupt enable bit
+INT0IE		VAR INTCON.4	; interrupt enable bits for edge change of pushbuttons (PORTB lower nibble)
+TMR0IF		VAR	INTCON.2	; timer0 overflow interrupt flag, must clear in software
+INT0IF		VAR INTCON.1	; flags for external edge interrupts, clear in software
+
+IPEN		VAR	RCON.7		; 1 = enables interrupt priority, 0 = no priority
+RBPU_		VAR	INTCON2.7	; enables pullups for PORTB inputs (active low)
+
+INT1IE		VAR INTCON3.3	
+INT2IE		VAR	INTCON3.4
+INT3IE		VAR INTCON3.5
+INTEDG0		VAR INTCON2.6
+INTEDG1		VAR INTCON2.5
+INTEDG2		VAR	INTCON2.4	; edge interrupts, 0=falling edge sensitive, 1=rising edge sensitive
+INTEDG3		VAR INTCON2.3
+
+INT1IF		VAR INTCON3.0
+INT2IF		VAR	INTCON3.1	
+INT3IF		VAR INTCON3.2
+
+; Peripheral Interrupt Enable Register 1 (PIE1)
+RC1IE		VAR	PIE1.5		; serial receive interrupt enable bit							
+RC1IF		VAR	PIR1.5		; receive interrupt flag (first port, RX1 and TX1)
+RC2IE		VAR PIE3.5		; 2nd serial port interrupt enable bit
+RC2IF		VAR	PIR3.5		; 2nd serial port interrupt flag
+
+ADCgo		VAR	ADCON0.1	; set = 1 to start AtoD conversion, clears when conversion is completed
+
+OERR1		VAR RCSTA1.1	; overrun error bit(s)
+OERR2		VAR	RCSTA2.1
+FERR1		VAR	RCSTA1.2	; framing errors bit(s) for serial communication
+FERR2		VAR	RCSTA2.2		
+CREN1		VAR	RCSTA1.4	; continuous receive enable bit(s) for serial communication
+CREN2		VAR	RCSTA2.4
+
+; Timer0 Control Register (T0CON)
+TMR0ON		VAR	T0CON.7		; 1 enables timer0, 0 stops the timer
+T08BIT		VAR	T0CON.6		; 1 = 8 bit counter, 0 = 16 bit counter
+T0CS		VAR	T0CON.5		; timer0 clock source: 0 = internal oscillator, 1 = T0CKl pin
+T0SE		VAR	T0CON.4		; timer0 clock edge select for external clocking pin 0 = rising edge, 1 = falling edge
+PSA			VAR	T0CON.3		; timer0 prescalar: 1 = no prescalar, 0 = use prescalar
+TOPS2		VAR	T0CON.2		; timer0 prescalar msb
+TOPS1		VAR	T0CON.1		; timer0 prescalar middle bit
+TOPS0		VAR	T0CON.0		; timer0 prescalar lsb
+TMR0MD		VAR	PMD1.0		; timer0 module enable: 0 = timer enabled, 1 = timer disabled
+
+; Timer1 Control Register (T1CON)
+TMR1CS1		VAR	T1CON.7
+TMR1CS0		VAR	T1CON.6
+T1CKPS1		VAR	T1CON.5
+T1CKPS0		VAR	T1CON.4
+T1SOSCEN	VAR	T1CON.3
+T1SYNC_		VAR	T1CON.2
+T1RD16		VAR	T1CON.1
+TMR1ON		VAR	T1CON.0
+
+; Timer1 Gate Control Register (T1GCON)
+TMR1GE		VAR	T1GCON.7
+T1GPOL		VAR	T1GCON.6
+T1GTM		VAR	T1GCON.5
+T1GSPM		VAR	T1GCON.4
+T1GGO		VAR	T1GCON.3
+T1GVAL		VAR	T1GCON.2
+T1GSS1		VAR	T1GCON.1
+T1GSS0		VAR	T1GCON.0
+
+; Timer3 Control Register (T1CON)
+TMR3CS1		VAR	T3CON.7
+TMR3CS0		VAR	T3CON.6
+T3CKPS1		VAR	T3CON.5
+T3CKPS0		VAR	T3CON.4
+T3SOSCEN	VAR	T3CON.3
+T3SYNC_		VAR	T3CON.2
+T3RD16		VAR	T3CON.1
+TMR3ON		VAR	T3CON.0
+
+; Timer3 Gate Control Register (T1GCON)
+TMR3GE		VAR	T3GCON.7
+T3GPOL		VAR	T3GCON.6
+T3GTM		VAR	T3GCON.5
+T3GSPM		VAR	T3GCON.4
+T3GGO		VAR	T3GCON.3
+T3GVAL		VAR	T3GCON.2
+T3GSS1		VAR	T3GCON.1
+T3GSS0		VAR	T3GCON.0

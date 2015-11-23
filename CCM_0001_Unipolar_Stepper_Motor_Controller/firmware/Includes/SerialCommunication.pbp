@@ -1,0 +1,380 @@
+Disable Interrupt
+goto	Serial_Done							; don't execute subroutines when code is loaded
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+PCrequest:
+	hserin [B]							; bring in the byte that caused the interrupt
+	If B=Query then						; if the expected "?" character,
+		hserout [Ready]					; communicate that controller is ready to receive the command
+	Else								; if not the expected character
+		hserout ["?",LF]				; communicate that controller is ready to receive the command
+		goto	Leave					; exit		
+	EndIf
+
+ReceiveCommand:
+	CommandLength=0
+	for i=0 to BufferLength-1
+		hserin 5000,CommandTimeout,[DataBuffer(i)]
+		If DataBuffer[0]="$" then 									; receiving a dollar sign is an indication that controller is just being pinged									
+			Number_L = 	Position_L
+			gosub		SendNumber_L								; SendNumber_L divides number by C before sending (converts internal step counter to real steps)
+			hserout		[LF]										; line feed ends communication sequence
+			goto		Leave
+		EndIf
+		if (DataBuffer[i]=" ")  then ReceiveArgument				; space separates command from arguments
+		if (DataBuffer[i]<97 OR DataBuffer[i]>122) then NoArgument	; anything else signifies a termination character
+		CommandBuffer[i] = DataBuffer[i]							; unless it is lower case alphabetic
+		CommandLength = CommandLength+1								; then save it as a command byte and increment the length
+	next i
+
+ReceiveArgument:
+	ArgumentLength=0
+	hserin 2000,ArgumentTimeout,[B]						; first byte can be special (signify negative)
+	If B="-" then
+		Negative = Yes
+		for i=1 to BufferLength-1
+			hserin 5000,ArgumentTimeout,[DataBuffer(i)]
+			if (DataBuffer[i]<48) OR (DataBuffer[i]>57)  then ArgumentDone	; any non-numeric character signifies end of argument
+			ArgumentBuffer[i-1] = DataBuffer[i]
+			ArgumentLength = ArgumentLength+1								
+		next i
+	Else
+		Negative = No
+		ArgumentBuffer[0] = B
+		ArgumentLength = ArgumentLength+1
+		for i=1 to BufferLength-1
+			hserin 5000,ArgumentTimeout,[DataBuffer(i)]
+			if (DataBuffer[i]<48) OR (DataBuffer[i]>57)  then ArgumentDone	; any non-numeric character signifies end of argument
+			ArgumentBuffer[i] = DataBuffer[i]
+			ArgumentLength = ArgumentLength+1								
+		next i
+	EndIf
+
+ArgumentDone:
+	If (ArgumentLength=0) then 
+		hserout	["ERR",CR,"Expected argument",LF]
+		goto	Leave					; argument not received
+	EndIf
+
+ConvertArgument:
+	Number_L = 0	
+	for i=1 to ArgumentLength
+		Ascii = ArgumentBuffer[ArgumentLength-i]
+		gosub	AsciiToDecimal
+		Select Case i											; determine magnitude
+			Case 1
+				Number_L =  Number_L + Decimal
+			Case 2
+				Number_L = Number_L + 10*Decimal
+			Case 3
+				Number_L = Number_L + 100*Decimal
+			Case 4
+				Number_L = Number_L + 1000*Decimal
+			Case 5
+				Number_L = Number_L + 10000*Decimal
+			Case 6
+				Number_L = Number_L + 100000*Decimal
+			Case 7
+				Number_L = Number_L + 1000000*Decimal
+		End Select
+	next i
+	L = abs Number_L
+	If L > 1000000 then 										; exit if more than a million absolute value
+		hserout	["ERR",CR,"Argument too large",LF]
+		goto	Leave
+	EndIf
+	If Negative = Yes then										; and sign
+		Number_L = -Number_L
+	EndIf	
+
+	If CommandBuffer[0]="m" AND CommandBuffer[1]="o" AND CommandBuffer[2]="v" and CommandBuffer[3]="e" then	Move
+	If CommandBuffer[0]="g" AND CommandBuffer[1]="o" AND CommandBuffer[2]="t" and CommandBuffer[3]="o" then	Go
+	If CommandBuffer[0]="m" AND CommandBuffer[1]="a" AND CommandBuffer[2]="x" and CommandLength=3 then SetMaxPos
+	If CommandBuffer[0]="m" AND CommandBuffer[1]="i" AND CommandBuffer[2]="n" and CommandLength=3 then SetMinPos
+	If CommandBuffer[0]="d" AND CommandBuffer[1]="e" AND CommandBuffer[2]="l" and CommandBuffer[3]="a" and CommandBuffer[4]="y" then SetDelay
+	If CommandBuffer[0]="r" AND CommandBuffer[1]="o" AND CommandBuffer[2]="t" and CommandBuffer[3]="a" and CommandBuffer[4]="t" and CommandBuffer[5]="e" then SetRotate
+	If CommandBuffer[0]="s" AND CommandBuffer[1]="t" AND CommandBuffer[2]="a" and CommandBuffer[3]="t" and CommandBuffer[4]="e" then SetState
+	If CommandBuffer[0]="l" AND CommandBuffer[1]="i" AND CommandBuffer[2]="m" and CommandBuffer[3]="i" and CommandBuffer[4]="t" then SetAtLimit
+	If CommandBuffer[0]="s" AND CommandBuffer[1]="t" AND CommandBuffer[2]="e" and CommandBuffer[3]="p" and CommandBuffer[4]="s" then SetSteps
+	If CommandBuffer[0]="m" AND CommandBuffer[1]="o" AND CommandBuffer[2]="d" and CommandBuffer[3]="e" then	SetMode
+	If CommandBuffer[0]="t" AND CommandBuffer[1]="r" AND CommandBuffer[2]="i" and CommandBuffer[3]="g" and CommandBuffer[4]="g" and CommandBuffer[5]="e" AND CommandBuffer[6]="r" and CommandBuffer[7]="s" then SetTriggers
+	If CommandBuffer[0]="g" AND CommandBuffer[1]="o" AND CommandBuffer[2]="a" and CommandBuffer[3]="l" then SetDestination
+	If CommandBuffer[0]="h" AND CommandBuffer[1]="o" AND CommandBuffer[2]="u" and CommandBuffer[3]="r" and CommandBuffer[4]="s" then ChangeHours
+	If CommandBuffer[0]="m" AND CommandBuffer[1]="i" AND CommandBuffer[2]="n" and CommandBuffer[3]="u" and CommandBuffer[4]="t" and CommandBuffer[5]="e" and CommandBuffer[6]="s" then ChangeMinutes
+	If CommandBuffer[0]="s" AND CommandBuffer[1]="e" AND CommandBuffer[2]="c" and CommandBuffer[3]="o" and CommandBuffer[4]="n" and CommandBuffer[5]="d" and CommandBuffer[6]="s" then ChangeSeconds
+	If CommandBuffer[0]="d" AND CommandBuffer[1]="o" AND CommandBuffer[2]="h" and CommandBuffer[3]="o" and CommandBuffer[4]="u" and CommandBuffer[5]="r" and CommandBuffer[6]="s" then ChangeDoHours
+	If CommandBuffer[0]="m" AND CommandBuffer[1]="a" AND CommandBuffer[2]="t" and CommandBuffer[3]="c" and CommandBuffer[4]="h" then ChangeTimeMatch
+	If CommandBuffer[0]="d" AND CommandBuffer[1]="o" AND CommandBuffer[2]="m" and CommandBuffer[3]="i" and CommandBuffer[4]="n" and CommandBuffer[5]="u" and CommandBuffer[6]="t" and CommandBuffer[7]="e" and CommandBuffer[8]="s" then ChangeDoMinutes
+	If CommandBuffer[0]="d" AND CommandBuffer[1]="o" AND CommandBuffer[2]="s" and CommandBuffer[3]="e" and CommandBuffer[4]="c" and CommandBuffer[5]="o" and CommandBuffer[6]="n" and CommandBuffer[7]="d" and CommandBuffer[8]="s" then ChangeDoSeconds
+	If CommandBuffer[0]="f" AND CommandBuffer[1]="e" AND CommandBuffer[2]="e" and CommandBuffer[3]="d" and CommandBuffer[4]="b" AND CommandBuffer[5]="a" AND CommandBuffer[6]="c" and CommandBuffer[7]="k" then	SetFeedback
+    If CommandBuffer[0]="s" AND CommandBuffer[1]="t" AND CommandBuffer[2]="y" and CommandBuffer[3]="l" and CommandBuffer[4]="e" then SetStepStyle
+
+	hserout	["ERR",CR,"Command ",STR CommandBuffer \CommandLength," not valid",CR]		; command with arguments not understood
+	goto	Leave					
+
+NoArgument:
+	If CommandBuffer[0]="d" AND CommandBuffer[1]="e" AND CommandBuffer[2]="f" and CommandBuffer[3]="a" and CommandBuffer[4]="u" and CommandBuffer[5]="l" and CommandBuffer[6]="t" then RestoreDefaults
+	If CommandBuffer[0]="r" AND CommandBuffer[1]="e" AND CommandBuffer[2]="p" and CommandBuffer[3]="o" and CommandBuffer[4]="r" and CommandBuffer[5]="t" then SendReport
+	If CommandBuffer[0]="r" AND CommandBuffer[1]="e" AND CommandBuffer[2]="b" and CommandBuffer[3]="o" and CommandBuffer[4]="o" and CommandBuffer[5]="t" then Reboot
+	If CommandBuffer[0]="h" AND CommandBuffer[1]="o" AND CommandBuffer[2]="m" and CommandBuffer[3]="e" then	SetAsHome
+
+	hserout	["ERR",CR,"Command ",STR CommandBuffer \CommandLength," not valid",LF]		; command without arguments not understood
+	goto		Leave		; only get here if a command without argument was not understood
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+SendNumber_L:
+	L = Number_L/C				; scale to be in motor steps instead of internal counts
+	hserout [Sdec L,CR]
+Return
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+Reboot:
+	hserout 	["AOK",LF]
+@ reset
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+RestoreDefaults:
+	gosub		SetValuesToDefault
+	goto		TaskCleanup
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+SetStepStyle:
+    If Number_L<0 OR Number_L>HalfStep then ArgumentError
+    StepStyle=Number_L
+    gosub       ConfigureMotor
+    goto        TaskCleanup
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+SetMaxPos:
+	L = C*Number_L
+	If L < Position_L then ArgumentError				; don't let user set the maximum position below where the motor currently is
+	MaxPos_L = 	C*Number_L									; user deals in steps, controller in counts
+	goto		TaskCleanup
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+SetMinPos:
+	L = C*Number_L
+	If L > Position_L then ArgumentError				; don't let user set the minimum position above where the motor currently is
+	MinPos_L = 	C*Number_L
+	goto		TaskCleanup
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+SetRotate:
+	If (Number_L!=-1) AND (Number_L!=1) then ArgumentError
+	Rotate_L =	Number_L
+	goto		TaskCleanup
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+SetState:
+	If (Number_L!=0) AND (Number_L!=1) then ArgumentError
+	State =	Number_L
+	goto		TaskCleanup
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+SetAtLimit:
+	If (Number_L!=0) AND (Number_L!=1) then ArgumentError	; 0 for do nothing, 1 for switch direction
+	AtLimit =	Number_L
+	goto		TaskCleanup
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+SetSteps:
+	Steps_L	=	C*Number_L
+	goto		TaskCleanup
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+SendReport:
+	gosub		ReadRTC
+	hserout		["firmware=",STR Firmware \FirmwareLength,CR]	
+	hserout 	["drive=",#EnableDrive,CR]				; motor on/off
+	hserout 	["mode=",#OpMode,CR]					; operation mode
+	hserout 	["feedback=",#FeedbackOn,CR]			; feedback enabled?
+	hserout 	["delay=",#Delay_W,CR]					; delay between steps
+	hserout 	["position="]							; current position (where the controller thinks the motor is)
+	Number_L = 	Position_L
+	gosub		SendNumber_L							; SendNumber_L automatically divides by C before sending
+	hserout 	["setpoint="]							; current setpoint, where the controller thinks the motor should be
+	Number_L = 	Setpoint_L
+	gosub		SendNumber_L
+	hserout 	["minpos="]								; minimum position
+	Number_L = 	MinPos_L
+	gosub		SendNumber_L	
+	hserout 	["maxpos="]								; maximum positions
+	Number_L = 	MaxPos_L
+	gosub		SendNumber_L
+	hserout 	["goal="]								; current destination, destination for the operation
+	Number_L = 	Destination_L
+	gosub		SendNumber_L
+	hserout 	["steps="]								; steps to take
+	Number_L = 	Steps_L
+	gosub		SendNumber_L
+	hserout 	["triggers=",#DoTriggers_W,CR]			; triggers before action
+	hserout 	["hours=",#Time(Hours),CR]				; time (hours)
+	hserout 	["minutes=",#Time(Minutes),CR]			; time (minutes)
+	hserout 	["seconds=",#Time(Seconds),CR]			; time (seconds)
+	hserout 	["dohours=",#DoTime(Hours),CR]			; action time (hours)
+	hserout 	["dominutes=",#DoTime(Minutes),CR]		; action time (minutes)
+	hserout 	["doseconds=",#DoTime(Seconds),CR]		; action time (seconds)
+	hserout 	["match=",#TimeMatch,CR]				; type of time match (0 = seconds, 1 = seconds + minutes, 2 = seconds + minutes + hours)
+	hserout 	["rotate="]							; current position (where the controller thinks the motor is)
+	Number_L = 	Rotate_L
+	gosub		SendNumber_L							; SendNumber_L automatically divides by C before sending
+	hserout 	["limit=",#AtLimit,CR]					; behavior at limit (0=nothing, 1=reverse, move and rotate modes only)
+	hserout 	["step style=",#StepStyle,CR]			; behavior when input is low
+	goto		TaskCleanup
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+SendCR:
+	hserout [CR]
+Return
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+Move:
+    If (Position_L+C*Number_L < MinPos_L) OR (Position_L+C*Number_L > MaxPos_L) then ArgumentError
+	Setpoint_L = 	Setpoint_L + C*Number_L					; scale to get in counts rather than motor steps
+	gosub		SendAOK										; send AOK before doing the move (could take awhile)
+	gosub		CorrectPosition
+	goto		TaskCleanup
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+Go:
+    If (C*Number_L<MinPos_L) OR (C*Number_L>MaxPos_L) then ArgumentError
+	Setpoint_L = C*Number_L			; scale to get in counts rather than motor steps
+	gosub		SendAOK				; send AOK before doing the goto (could take awhile)
+	gosub		CorrectPosition
+	goto		TaskCleanup
+
+SetDelay:
+	If (Number_L < MinDelay) then ArgumentError
+	Delay_W = 	Number_L
+	gosub		SendAOK
+	goto		TaskCleanup
+
+SetMode:
+	If (Number_L>StateShutter) OR (Number_L<0) then ArgumentError
+	OpMode = 	Number_L
+	Setpoint_L = Position_L									; make position error zero when changing operation modes
+	gosub		SendAOK
+	goto		TaskCleanup
+
+SetAsHome:
+	Position_L = 0
+	Setpoint_L = 0
+	gosub		SendAOK
+	goto		TaskCleanup
+
+SetTriggers:
+	If (Number_L<1) OR (Number_L>10000) then ArgumentError
+	DoTriggers_W = Number_L
+	gosub		SendAOK
+	goto		TaskCleanup
+
+SetDestination:
+	Destination_L =	C*Number_L
+	gosub		SendAOK
+	goto		TaskCleanup
+
+SetFeedback:
+	If (Number_L!=0) AND (Number_L!=1) then ArgumentError
+	If (Number_L!=0) AND (OpMode = StateRotate) then ArgumentError
+	gosub		ResetCounter
+	FeedbackOn = Number_L
+	gosub		SendAOK
+	goto		TaskCleanup
+
+ChangeHours:
+	If (Number_L>23) OR (Number_L<0) then ArgumentError
+	gosub		ReadRTC
+	Time[Hours] = Number_L
+	gosub		UpdateRTC
+	gosub		SendAOK
+	goto		TaskCleanup
+
+ChangeMinutes:
+	If (Number_L>59) OR (Number_L<0) then ArgumentError
+	gosub		ReadRTC
+	Time[Minutes] = Number_L
+	gosub		UpdateRTC
+	gosub		SendAOK
+	goto		TaskCleanup
+
+ChangeSeconds:
+	If (Number_L>59) OR (Number_L<0) then ArgumentError
+	gosub		ReadRTC
+	Time[Seconds] = Number_L
+	gosub		UpdateRTC
+	gosub		SendAOK
+	goto		TaskCleanup
+
+ChangeDoHours:
+	If (Number_L>23) OR (Number_L<0) then ArgumentError
+	DoTime[Hours] = Number_L
+	gosub		SendAOK
+	goto		TaskCleanup
+
+ChangeTimeMatch:
+	If Number_L>SecsMinsHrs then ArgumentError
+	TimeMatch = Number_L
+	gosub		SendAOK
+	goto		TaskCleanup
+
+ChangeDoMinutes:
+	If (Number_L>59) OR (Number_L<0) then ArgumentError
+	DoTime[Minutes] = Number_L
+	gosub		SendAOK
+	goto		TaskCleanup
+
+ChangeDoSeconds:
+	If (Number_L>59) OR (Number_L<0) then ArgumentError
+	DoTime[Seconds] = Number_L
+	gosub		SendAOK
+	goto		TaskCleanup
+
+ArgumentError:
+	hserout ["ERR",CR,"Argument out of range",LF]
+	goto	Leave
+
+CommandTimeout:
+	hserout ["ERR",CR,"Command Timeout",LF]
+	goto	Leave
+
+ArgumentTimeout:
+	hserout ["ERR",CR,"Argument Timeout",LF]
+	goto	Leave
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+DecimalToAscii:							; determine ascii character equivalent of variable 'Decimal' (0-9) and assign to 'Ascii'
+	Ascii = "?"
+	Lookup	Decimal,["0123456789"],Ascii
+Return
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+AsciiToDecimal:							; determine decimal equivalent of variable 'Ascii' and assign to 'Decimal'
+	Decimal = 0								; default value for D if not found in the list
+	Lookdown Ascii,["0123456789"],Decimal		; if A is "0", D is 0; if A is "1", D is 1; etc.
+Return
+
+SendAOK:
+	hserout		["AOK",LF]		; line feed (0x0A) ends transmission
+Return
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; A subroutine to cleanup after a task has been completed: return the checksum byte etc.
+TaskCleanup:
+	gosub		SaveSettings    ; save the new settings
+Leave:
+	gosub		EnableInterrupts
+	If TempOpMode != OpMode then
+		TempOpMode = OpMode					; ensure lcd updates if mode changed
+		TempPosition_L = Position_L+1		; ensure position gets printed
+		Resume 		Main
+	Else
+		Resume
+	EndIf
+
+SendDecimal:
+	gosub	DecimalToAscii
+	hserout [Ascii]
+Return
+
+Serial_Done:
+Enable Interrupt

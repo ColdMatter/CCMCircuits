@@ -1,0 +1,29 @@
+Partlist exported from C:/Users/nfitch/Google Drive/Imperial/Electronics/CCM_0004_VCO/revB/CCM0004.sch at 07/05/2015 15:25:44
+
+Qty Value      Device          Package      Parts                        Description                                                MF    MPN        OC_FARNELL OC_NEWARK
+6   0.1        CAPACITOR0603   0603         C1, C2, C3, C7, C8, C11                                                                                                      
+4   0.1        CAPACITOR2010   2010         C4, C5, C17, C18                                                                                                             
+1   1000pF     CAPACITOR2010   2010         C10                                                                                                                          
+1   100pF      CAPACITOR0603   0603         C9                                                                                                                           
+7   10k        RESISTOR0603    0603         R1, R2, R3, R4, R5, R11, R12 RESISTOR, American symbol                                                                       
+1   10k        RESISTOR2010    2010         R10                          RESISTOR, American symbol                                                                       
+1   180        RESISTOR2010    2010         R9                           RESISTOR, American symbol                                                                       
+1   22-23-2031 22-23-2031      22-23-2031   X4                           .100" (2.54mm) Center Header - 3 Pin                       MOLEX 22-23-2031 1462950    30C0862  
+1   22-23-2041 22-23-2041      22-23-2041   X3                           .100" (2.54mm) Center Header - 4 Pin                       MOLEX 22-23-2041 1462920    38C0355  
+1   270        RESISTOR2010    2010         R8                           RESISTOR, American symbol                                                                       
+1   50         RESISTOR2010    2010         R7                           RESISTOR, American symbol                                                                       
+1   530        RESISTOR2010    2010         R6                           RESISTOR, American symbol                                                                       
+1   7812DT     7812DT          TO252        IC1                          Positive VOLTAGE REGULATOR                                                                      
+1   BU-SMA-V   BU-SMA-V        BU-SMA-V     X1                           FEMALE SMA CONNECTOR                                                                            
+1   CA3140D    CA3140D         SO08         IC2                          OP AMP                                                                                          
+1   CA3140_BD  CA3140_BD       SO08         IC8                          OP AMP                                                                                          
+1   LAT        LAT             MMM168       IC4                          Minicircuits surface mount attenuator                                                           
+1   MAB32      MAB32           MAB32        X2                           CONNECTOR                                                                                       
+1   MAR3       MAR3            MAR          IC5                          MiniCircuits MAR-3+ amplifier                                                                   
+1   MAV11      MAV11           MAR          IC7                          MiniCircuits MAV-11 amplifer, currently identical to MAR-3                                      
+1   MMBT3906   MMBT3906LT1SMD  SOT23-BEC    T2                           PNP Transistror                                                                                 
+1   POS-50+    POS             A01          IC3                          MiniCircuits POS-x VCO, through hole package                                                    
+1   SYAS-1     SYAS-1          TTT166       IC6                          MiniCircuits voltage variable attenuator                                                        
+2   TCCH-80    TCCH-80         PL-147       L1, L2                       MiniCircuits TCCH-80+ choke                                                                     
+2   TESTPOINT  TESTPOINT       TESTPOINT    TP1, TP2                                                                                                                     
+1   red        LEDCHIPLED_0603 CHIPLED_0603 LED1                         LED                                                                                             

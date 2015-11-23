@@ -1,0 +1,265 @@
+Disable Interrupt
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; VARIABLES DEFINED HERE 
+; Don't call any subroutines from this code because they haven't been loaded yet
+; Default values are defined by the subroutine just below the variable definitions
+		
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; PIC hardware connections and port setup:
+
+; PORTA:
+EnableDrive		VAR	PORTA.0		; enable motor drive circuits output, active high
+ResetDrive_ 	VAR	PORTA.1		; reset motor drive circuits output, active low
+CNTRL			VAR	PORTA.2		; L293 motor drive CNTRL pin output, controls chopper circuits for half steps
+HalfFull_		VAR	PORTA.3		; L293 half/full output, controls step sequence (1=half,0=full)
+CountPos		VAR	PORTA.5		; positive direction external step trigger counter using Timer1 (input)
+ANCON0		=	%00000000		; make PORTA a digital port
+ANCON1		=	%00000000
+TRISA		=	%00000000		; all outputs (no RA4 on device)		
+
+; PORTB:
+Right			VAR	PORTB.0		; 2 pushbuttons for manually stepping the motor
+Left			VAR	PORTB.1		; these lines are internally pulled up to 5V, being grounded on a push (inputs)
+Illuminate		VAR	PORTB.2		; turns the pushbutton backlights: 1=ON, 0=OFF (output)
+ExtTrigger		VAR	PORTB.3		; external trigger (input)
+ExtDirection	VAR	PORTB.4		; external direction (input)
+CountNeg		VAR	PORTB.5		; negative direction external step trigger counter using Timer0 (input)
+WPUB		=	%00000011		; enable (weak) pullups for pushbutton connections PORTB0:1
+RBPU_		=	0				; enable PORTB pullups (inputs only), for pushbuttons so they float at logic high
+TRISB		=	%11111011		; configure directionality of PORTB
+
+; PORTC:
+I2Cclk			VAR	PORTC.0		; I2C bus clock for peripheral devices, PIC is the master (output as master, but configured as input)
+I2Cdata			VAR	PORTC.1		; I2C bus data for peripheral devices, PIC is the master (input/output but configured as input)
+Hz				VAR	PORTC.2		; 1Hz square wave from RTC, for counting seconds (input)
+DataSelect		VAR	PORTC.3		; data select for rotary counter (0=MSB,1=LSB of data word) (output)
+ReadCounter_	VAR	PORTC.4		; read counter signal, send low to enable the output drivers (output)
+ResetCounter_	VAR	PORTC.5		; reset counter by sending low (set count to zero) (output)
+TX				VAR	PORTC.6		; serial port transmit pin (output)
+RX				VAR	PORTC.7		; serial port receive pin (input)
+TRISC		=	%10000111	
+
+; PORTD:
+DataBus			VAR	PORTD		; data bus for reading rotary encoder
+TRISD		=	%11111111		; data bus for rotary encoder is all inputs
+
+; PORTE:
+BusControl		VAR	PORTE.0		; pic control of who has the motor driving bus, 0 = ext, 1 = pic (output)
+PICstep			VAR	PORTE.1		; pic control of motor stepping (output)
+PICdirection	VAR	PORTE.2		; pic control of motor direction (output)
+TRISE		=	%11111000
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+; CONSTANTS
+MinDelay		CON 2			; minimum delay between steps, ms
+C				CON 16			; conversion: physical steps to internal counting
+								; = 4*(AMT102 PPR)/(Motor Steps per revolution) = 4*800/200 = 16	
+No				CON 0			; constants for ease of reading of feedback
+Yes				CON 1
+False			CON 0
+True			CON 1
+Half			CON 1
+Full			CON 0
+
+StepStyle       VAR Byte        ; stepping modes
+FullStep        CON 0           ; "normal" drive (200 steps per revolution)
+HalfStep        CON 1           ; "half" stepping (400 steps per revolution)
+
+
+; General Operation:
+
+; BYTE VARIABLES
+B				VAR	Byte
+OpMode			VAR	Byte		; 10 allowed modes of operation:
+TempOpMode		VAR	Byte
+MotorOff		CON 0			; do nothing
+Manual			CON 1			; change position with pushbuttons		
+External		CON 2			; change position with external trigger and TTL direction control
+TriggeredGoto	CON 3			; goto a position on trigger event(s)
+TimedGoto		CON 4			; goto a position at a specified time
+TriggeredMove	CON 5			; move a certain number of steps on trigger event(s)
+TimedMove		CON 6			; move a certain number of steps at a specified time
+StateRotate		CON 7			; rotate the motor on logic level State of "trigger" external input
+TriggeredShutter CON 8			; operate as a shutter, opens/closes on trigger event(s)
+StateShutter	CON 9			; operate as a shutter, opens/closes depedending on external logic level
+Direction		VAR	Byte		; and in which direction
+Pos				CON 0			; low positive
+Neg				CON 1			; high negative
+FeedbackOn		VAR	Byte		; 1 = closed loop operation, 0 = open loop operation
+TempFeedbackOn	VAR	Byte
+State			VAR	Bit			; state on which to rotate (0/1)
+Limit			VAR	Bit			; flag indicates that motor is at one of the position limits
+AtLimit			VAR	Byte		; byte controls behavior at limit for various modes
+Nothing			CON 0           ; don't move the motor
+SwitchDirection	CON 1
+UseStoredSettings	VAR	Byte
+NumSpaces		VAR	Byte		; number of spaces to write 
+Characters		VAR	Byte		; keep track of # of characters for filling lines with empty spaces
+Spaces			VAR	Byte		; number of spaces to print
+ones			VAR	Byte		; for lcd display of one's place of some variable
+tens			VAR	Byte		; for lcd display of ten's place
+hundreds		VAR	Byte		; for lcd display of hundred's place
+thousands		VAR	Byte		; for lcd display of thousand's place
+tenthousands	VAR	Byte		; for lcd display of tens of thousand's place
+hundredthousands	VAR	Byte
+millions		VAR	Byte
+Ascii			VAR	Byte
+Decimal			VAR	Byte
+ArgumentLength	VAR	Byte
+CommandLength	VAR	Byte
+;State			VAR	Byte
+;State_Temp		VAR	Byte
+Negative		VAR	Byte
+Ri				VAR	Byte		; button loop tracking variables
+Li				VAR	Byte
+Ri			=	0
+Li			=	0
+Minutes_Temp	VAR	Byte
+Debugger        VAR Byte        ;
+
+; WORD VARIABLES
+W				VAR	Word		; temporary word variable
+i				VAR	Word		; generic counting etc. variables
+j				VAR	Word
+k				VAR	Word
+Delay_W			VAR	Word		; period between steps in milliseconds (10-10,000) = (100Hz - 0.1Hz), for correcting position
+Triggers_W		VAR	Word
+DoTriggers_W	VAR	Word					; number of triggers to wait for before executing task
+Number_W		VAR	Word		; variable for printing decimal values to lcd screen
+Change_W		VAR	Word		; change in position as measured by feedback
+
+; LONG VARIABLES
+Position_L		VAR	Long		; position is a long variable (signed)
+TempPosition_L	VAR	Long		; temporary position storage
+Setpoint_L		VAR	Long		; where the motor thinks it should be
+TempSetpoint_L	VAR	Long		; temporary setpoint storage
+
+StepError_L		VAR	Long		; Setpoint-Position
+Destination_L	VAR	Long		; destination of goto etc.
+MaxPos_L		VAR	Long
+MinPos_L		VAR	Long
+Steps_L			VAR	Long
+L				VAR	Long		; a temporary long variable
+Number_L		VAR	Long 
+Home_L			VAR	Long
+Rotate_L		VAR	Long		; which direction to rotate when input trigger is high (-1 or +1)
+
+; ARRAYS
+FirmwareLength	CON 3				
+Firmware		VAR	Byte[FirmwareLength]	; firmware version, length is 3 characters X.Y				
+FirstTimeOn		VAR	Byte
+TimeLength		CON 3			
+Time			VAR	Byte[TimeLength]		; {seconds, minutes, hours}				
+TimeBCD			VAR	Byte[TimeLength]		; BCD version of Time (seconds, minutes, hours)
+DoTime			VAR	Byte[TimeLength]		; time to do the task
+Seconds			CON 0						; array indices
+Minutes			CON 1
+Hours			CON 2
+SecsPerHour		CON 3600
+SecsPerMinute	CON 60
+TimeMatch		VAR	Byte
+Secs			CON 0
+SecsMins		CON 1
+SecsMinsHrs		CON 2
+
+; Serial Communication Variables							
+Query			CON "?"					; assigned wakeup character to be sent first by PC
+Ready			CON "!"					; response byte indicating the PIC is ready to receive the command bytes
+CR				CON	13 					; 0x0D carriage return gives new line
+LF				CON 10 					; 0x0A line feed ends transmission
+BufferLength	CON 32					; buffer for serial communication
+CommandBuffer	VAR	Byte[BufferLength]
+ArgumentBuffer	VAR	Byte[BufferLength]
+DataBuffer		VAR	Byte[BufferLength]
+
+; EEPROM Variables					
+eeI2Cbot		VAR	Byte					; eeprom bottom bank I2C address, must be a variable
+eeI2Cbot	=	%10100000					 							
+eeI2Ctop		VAR	Byte					; eeprom top bank I2C address, must be a variable
+eeI2Ctop	=	%10101000					; only the bottom bank is used in this project 
+eeAddress 		VAR	Word					; variable address for accessing EEPROM internal locations (memory address)
+PageSize   		CON	128						; writing entire pages (128 bytes) allows sequential reads/writes	
+
+; LCD variables:
+lcdI2Caddress	VAR	Byte
+lcdI2Caddress =	$50							
+LCDprefix       CON $FE    		; sent before any command byte, as the subaddress
+
+; RTC internal variables
+rtcI2Caddress	VAR	Byte
+rtcI2Caddress =	$D0
+rtcAddress		VAR	Byte 		; internal etc memory address   
+
+goto Variables_Done
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; SUBROUTINES BELOW THIS
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Setup inputs and outputs and configure ports
+SetupIO:
+; use interrupt flags for pushbuttons to indicate button pushes, but don't use the interrupt
+	INTEDG0		=	0			; interrupt flags get set on falling edge of external signals RB0:RB1
+	INTEDG1		=	0			; right/left pushbuttons available for manually stepping the motor
+
+; setup timer0 as a counter of "positive" steps (to calculate desired position when in external mode)
+	T08BIT		=	0			; 16 bit mode
+	T0CS		=	1			; external clock source (pin)
+	T0SE		=	0			; clocks on rising edges
+	PSA			=	1			; no prescalar
+	TMR0ON		=	1			; enable timer0 module
+
+; setup timer1 as a counter of "negative" steps (to calculate desired position when in external mode)
+	TMR1CS1		=	1			; timer1 counts regardless of gate function/state
+	TMR1CS0		=	0			; timer1 clock is from pin (or oscillator, depending on SOSCEN bit)
+	T1CKPS1		=	0			; no prescalar
+	T1CKPS0		=	0
+	T1SOSCEN	=	0			; SOSC (secondary oscillator) is disabled, external clock from the T3CKl pin (rising edge)
+	T1SYNC_		=	1			; do not synchronize external clock input
+	T1RD16		=	0			; read Timer1 as two 8-bit registers
+	TMR1ON		=	1			; enable timer1 module
+
+; Default PIC output values (not set elsewhere):
+	ReadCounter_	=	1						; not reading the counter
+	ResetCounter_	=	1						; not resetting the encoder
+	DataSelect		=	0						; doesn't matter
+	PicStep			=	0
+	PicDirection	=	0
+Return
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+SetValuesToDefault:								; set default values of variables
+	Time[Seconds] 	= 	0
+	Time[Minutes]	=	0
+	Time[Hours]		=	13
+	gosub				UpdateRTC
+
+	DoTime[Seconds]	=	0
+	DoTime[Minutes]	=	0
+	DoTime[Hours]	=	12
+	Rotate_L		=	1						; rotate in positive sense on high input (state rotate mode only)
+	AtLimit			=	Nothing					; do nothing if mode reaches software position limit
+	TimeMatch		=	Secs
+
+	OpMode			=	Manual
+    StepStyle       =   FullStep
+	FeedbackOn		=	No				
+	Delay_W			=	10 max MinDelay			; default delay between steps, ms
+	MinPos_L		=	-100000*C				; For no position limits, make both zero
+	MaxPos_L		=	100000*C				; remember, the controller deals in counts, not steps					
+	gosub				ClearCounters			; clear trigger counters
+	Position_L 		= 	0
+	Setpoint_L 		= 	0
+	Destination_L 	= 	0
+	Steps_L			=	50*C
+	DoTriggers_W	=	100
+Return
+
+
+Variables_Done:
+
+Enable Interrupt
