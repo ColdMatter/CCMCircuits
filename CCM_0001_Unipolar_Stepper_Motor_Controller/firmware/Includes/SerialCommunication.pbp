@@ -10,6 +10,7 @@ PCrequest:
 		hserout ["?",LF]				; communicate that controller is ready to receive the command
 		goto	Leave					; exit		
 	EndIf
+	TempOpMode	=	OpMode
 
 ReceiveCommand:
 	CommandLength=0
@@ -129,12 +130,14 @@ Return
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Reboot:
-	hserout 	["AOK",LF]
+	gosub		SendAOK
+	hserout		[CR,LF]
 @ reset
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 RestoreDefaults:
 	gosub		SetValuesToDefault
+	TempOpMode = OpMode+1				; pretend the opmode has changed to trigger a return to main
 	goto		TaskCleanup
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -147,15 +150,15 @@ SetStepStyle:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 SetMaxPos:
 	L = C*Number_L
-	If L < Position_L then ArgumentError				; don't let user set the maximum position below where the motor currently is
-	MaxPos_L = 	C*Number_L									; user deals in steps, controller in counts
+	If L < Position_L OR L < MinPos_L then ArgumentError				; don't let user set the maximum position below where the motor currently is
+	MaxPos_L = 	L														; user deals in steps, controller in counts (16 counts/step)
 	goto		TaskCleanup
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 SetMinPos:
 	L = C*Number_L
-	If L > Position_L then ArgumentError				; don't let user set the minimum position above where the motor currently is
-	MinPos_L = 	C*Number_L
+	If L > Position_L  OR L > MaxPos_L then ArgumentError				; don't let user set the minimum position above where the motor currently is
+	MinPos_L = 	L
 	goto		TaskCleanup
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -189,36 +192,19 @@ SendReport:
 	hserout 	["mode=",#OpMode,CR]					; operation mode
 	hserout 	["feedback=",#FeedbackOn,CR]			; feedback enabled?
 	hserout 	["delay=",#Delay_W,CR]					; delay between steps
-	hserout 	["position="]							; current position (where the controller thinks the motor is)
-	Number_L = 	Position_L
-	gosub		SendNumber_L							; SendNumber_L automatically divides by C before sending
-	hserout 	["setpoint="]							; current setpoint, where the controller thinks the motor should be
-	Number_L = 	Setpoint_L
-	gosub		SendNumber_L
-	hserout 	["minpos="]								; minimum position
-	Number_L = 	MinPos_L
-	gosub		SendNumber_L	
-	hserout 	["maxpos="]								; maximum positions
-	Number_L = 	MaxPos_L
-	gosub		SendNumber_L
-	hserout 	["goal="]								; current destination, destination for the operation
-	Number_L = 	Destination_L
-	gosub		SendNumber_L
-	hserout 	["steps="]								; steps to take
-	Number_L = 	Steps_L
-	gosub		SendNumber_L
+	hserout 	["position=",Sdec Position_L/C,CR]		; current position (where the controller thinks the motor is)
+	hserout 	["setpoint=",Sdec Setpoint_L/C,CR]		; current setpoint, where the controller thinks the motor should be
+	hserout 	["minpos=",Sdec MinPos_L/C,CR]			; minimum position
+	hserout 	["maxpos=",Sdec MaxPos_L/C,CR]			; maximum position
+	hserout 	["limit=",#Limit,CR]					; currently at limit of allowed range?
+	hserout 	["goal=",Sdec Destination_L/C,CR]		; current destination, destination for the operation
+	hserout 	["steps=",Sdec Steps_L/C,CR]			; steps to take
 	hserout 	["triggers=",#DoTriggers_W,CR]			; triggers before action
-	hserout 	["hours=",#Time(Hours),CR]				; time (hours)
-	hserout 	["minutes=",#Time(Minutes),CR]			; time (minutes)
-	hserout 	["seconds=",#Time(Seconds),CR]			; time (seconds)
-	hserout 	["dohours=",#DoTime(Hours),CR]			; action time (hours)
-	hserout 	["dominutes=",#DoTime(Minutes),CR]		; action time (minutes)
-	hserout 	["doseconds=",#DoTime(Seconds),CR]		; action time (seconds)
+	hserout 	["time=",dec2 Time(Hours),":",dec2 Time(Minutes),":",dec2 Time(Seconds),CR]			; cuurent time (hours:minutes:seconds)
+	hserout 	["dotime=",dec2 DoTime(Hours),":",dec2 DoTime(Minutes),":",dec2 DoTime(Seconds),CR]		; action time (hours:minutes:seconds)
 	hserout 	["match=",#TimeMatch,CR]				; type of time match (0 = seconds, 1 = seconds + minutes, 2 = seconds + minutes + hours)
-	hserout 	["rotate="]							; current position (where the controller thinks the motor is)
-	Number_L = 	Rotate_L
-	gosub		SendNumber_L							; SendNumber_L automatically divides by C before sending
-	hserout 	["limit=",#AtLimit,CR]					; behavior at limit (0=nothing, 1=reverse, move and rotate modes only)
+	hserout 	["rotate=",Sdec Rotate_L,CR]			; +1 or -1
+	hserout 	["atlimit=",#AtLimit,CR]				; behavior at limit (0=nothing, 1=reverse, move and rotate modes only)
 	hserout 	["step style=",#StepStyle,CR]			; behavior when input is low
 	goto		TaskCleanup
 
@@ -354,13 +340,14 @@ AsciiToDecimal:							; determine decimal equivalent of variable 'Ascii' and ass
 Return
 
 SendAOK:
-	hserout		["AOK",LF]		; line feed (0x0A) ends transmission
+	hserout		["AOK",CR,LF]			; line feed (0x0A) ends transmission
 Return
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; A subroutine to cleanup after a task has been completed: return the checksum byte etc.
 TaskCleanup:
-	gosub		SaveSettings    ; save the new settings
+	gosub		SaveSettings				; save the new settings
+	gosub		SendAOK
 Leave:
 	gosub		EnableInterrupts
 	If TempOpMode != OpMode then
@@ -368,7 +355,7 @@ Leave:
 		TempPosition_L = Position_L+1		; ensure position gets printed
 		Resume 		Main
 	Else
-		Resume
+		Resume		
 	EndIf
 
 SendDecimal:

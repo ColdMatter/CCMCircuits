@@ -15,21 +15,49 @@ goto	EEPROM_Done						; jump over subroutines so they don't evaluate on startup
 
 SaveSettings:												; save off current variable settings to EEPROM to reload (if power is removed and then restored)
 	eeAddress = 0
-	I2CWRITE I2Cdata,I2Cclk,eeI2Cbot,eeAddress,[Position_L,OpMode,Delay_W,Setpoint_L,Destination_L,MinPos_L,MaxPos_L,_
-												DoTriggers_W,STR DoTime \TimeLength,Steps_L,Rotate_L,FeedbackOn,StepStyle,AtLimit,State]
+	ArrayWrite	eeBuffer,[_
+				Position_L.Byte0,Position_L.Byte1,Position_L.Byte2,Position_L.Byte3,_
+				OpMode,FeedbackOn,StepStyle,Limit,AtLimit,State,TimeMatch,_
+				Delay_W.Highbyte,Delay_W.Lowbyte,_											; some kind of saving bug if you send Delay_W directly [WEIRD!!!]
+				DoTriggers_W.Highbyte,DoTriggers_W.Lowbyte,_
+				Setpoint_L.Byte0,Setpoint_L.Byte1,Setpoint_L.Byte2,Setpoint_L.Byte3,_
+				Destination_L.Byte0,Destination_L.Byte1,Destination_L.Byte2,Destination_L.Byte3,_
+				MinPos_L.Byte0,MinPos_L.Byte1,MinPos_L.Byte2,MinPos_L.Byte3,_
+				MaxPos_L.Byte0,MaxPos_L.Byte1,MaxPos_L.Byte2,MaxPos_L.Byte3,_
+				Steps_L.Byte0,Steps_L.Byte1,Steps_L.Byte2,Steps_L.Byte3,_
+				Rotate_L.Byte0,Rotate_L.Byte1,Rotate_L.Byte2,Rotate_L.Byte3,_
+				STR DoTime \TimeLength]
+	DataLength = 42
+	I2CWRITE I2Cdata,I2Cclk,eeI2Ctop,eeAddress,[STR eeBuffer \DataLength]
 	pause	10
 Return
 
 RestoreSettings:
-	eeAddress = 0						
-	I2CREAD I2Cdata,I2Cclk,eeI2Cbot,eeAddress,[Position_L,OpMode,Delay_W,Setpoint_L,Destination_L,MinPos_L,MaxPos_L,_
-												DoTriggers_W,STR DoTime \TimeLength,Steps_L,Rotate_L,FeedbackOn,StepStyle,AtLimit,State]																																			;
+	gosub		ClearLCD
+	I2Cwrite	I2Cdata,I2Cclk,lcdI2Caddress,["Restoring settings  "]
+	eeAddress = 0	
+	DataLength = 42
+	I2CREAD		I2Cdata,I2Cclk,eeI2Ctop,eeAddress,[STR eeBuffer \DataLength]
+	ArrayRead	eeBuffer,[_
+				Position_L.Byte0,Position_L.Byte1,Position_L.Byte2,Position_L.Byte3,_
+				OpMode,FeedbackOn,StepStyle,Limit,AtLimit,State,TimeMatch,_
+				Delay_W.Highbyte,Delay_W.Lowbyte,_											; some kind of saving bug if you send Delay_W directly [WEIRD!!!]
+				DoTriggers_W.Highbyte,DoTriggers_W.Lowbyte,_
+				Setpoint_L.Byte0,Setpoint_L.Byte1,Setpoint_L.Byte2,Setpoint_L.Byte3,_
+				Destination_L.Byte0,Destination_L.Byte1,Destination_L.Byte2,Destination_L.Byte3,_
+				MinPos_L.Byte0,MinPos_L.Byte1,MinPos_L.Byte2,MinPos_L.Byte3,_
+				MaxPos_L.Byte0,MaxPos_L.Byte1,MaxPos_L.Byte2,MaxPos_L.Byte3,_
+				Steps_L.Byte0,Steps_L.Byte1,Steps_L.Byte2,Steps_L.Byte3,_
+				Rotate_L.Byte0,Rotate_L.Byte1,Rotate_L.Byte2,Rotate_L.Byte3,_
+				STR DoTime \TimeLength]																																	;
 Return
 
 
 SavePosition:												; save off just the position
 	eeAddress = 0
-	I2CWRITE I2Cdata,I2Cclk,eeI2Cbot,eeAddress,[Position_L]
+	ArrayWrite	eeBuffer,[Position_L.Byte0,Position_L.Byte1,Position_L.Byte2,Position_L.Byte3]
+	DataLength = 4
+	I2CWRITE I2Cdata,I2Cclk,eeI2Ctop,eeAddress,[STR eeBuffer \DataLength]
 Return
 
 

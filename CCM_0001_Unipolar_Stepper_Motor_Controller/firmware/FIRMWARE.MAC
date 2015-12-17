@@ -972,14 +972,6 @@ CMPLT?NCL macro Nin, Cin, Label
     endm
 CMPLT_USED = 1
 
-CMPLT?NNL macro Nin1, Nin2, Label
-        MOVE?NN Nin1, R0
-        MOVE?NNA Nin2, R1
-        L?CALL  CMPLT
-        BIT?GOTO 0, STATUS, Z, Label
-    endm
-CMPLT_USED = 1
-
 CMPNE?BBB macro Bin1, Bin2, Bout
         MOVE?BA Bin1
         CHK?RP  Bin2
@@ -1087,17 +1079,6 @@ ABS?WW macro Win, Wout
 endlabel
     endm
 
-MAX?CCW macro Cin1, Cin2, Wout
-        MOVE?CN Cin1, R0
-        MOVE?CB (Cin2) >> 24, R1 + 3
-        MOVE?CB upper (Cin2), R1 + 2
-        MOVE?CB high (Cin2), R1 + 1
-        MOVE?CA low (Cin2)
-        L?CALL  MAX
-        MOVE?AWW R0, Wout
-    endm
-MAX_USED = 1
-
 SHIFTL?NCN macro Nin, Cin, Nout
     if ((Cin) == 1)
         bcf     STATUS, C
@@ -1172,15 +1153,69 @@ UMINUS?NN macro Nin, Nout
     endif
     endm
 
+ARRAYREADNAME?B macro Bin
+        MOVE?CW Bin, R5
+    endm
+
+ARRAYREADCOUNT?C macro Cin
+        MOVE?CB Cin, R4 + 1
+    endm
+
+ARRAYREAD?B macro Bout
+        L?CALL  ARRAYREAD
+        MOVE?AB Bout
+    endm
+ARRAYREAD_USED = 1
+
+ARRAYREAD?T macro Regout, Bitout
+        L?CALL  ARRAYREAD
+        MOVE?AT Regout, Bitout
+    endm
+ARRAYREAD_USED = 1
+
+ARRAYREADSTR?B macro Bin
+        MOVE?CW ARRAYREAD, R8
+	MOVE?CB	high (Bin), FSR2H
+        MOVE?CA	low (Bin)
+        L?CALL  SERIN2STR
+    endm
+ARRAYREAD_USED = 1
+SERIN2STR_USED = 1
+
 ARRAYWRITENAME?B macro Bin
         MOVE?CW Bin, R5
     endm
+
+ARRAYWRITECOUNT?C macro Cin
+        MOVE?CB Cin, R4 + 1
+    endm
+
+ARRAYWRITE?B macro Bin
+        MOVE?BA Bin
+        L?CALL  ARRAYWRITE
+    endm
+ARRAYWRITE_USED = 1
 
 ARRAYWRITE?C macro Cin
         movlw   Cin
         L?CALL  ARRAYWRITE
     endm
 ARRAYWRITE_USED = 1
+
+ARRAYWRITE?T macro Regin, Bitin
+        MOVE?TA Regin, Bitin
+        L?CALL  ARRAYWRITE
+    endm
+ARRAYWRITE_USED = 1
+
+ARRAYWRITESTRN?B macro Bin
+        MOVE?CW ARRAYWRITEJ, R8
+	MOVE?CB	high (Bin), FSR2H
+        MOVE?CA	low (Bin)
+        L?CALL  SEROUT2STRN
+    endm
+ARRAYWRITEJ_USED = 1
+SEROUT2STRN_USED = 1
 
 ASM? macro
         RST?RP
@@ -1310,6 +1345,10 @@ HSEROUTCOUNT?C macro Cin
         MOVE?CB Cin, R4 + 1
     endm
 
+HSEROUTNUM?B macro Bin
+        MOVE?BN Bin, R2
+    endm
+
 HSEROUTSNUM?N macro Nin
         MOVE?NN Nin, R2
     endm
@@ -1322,6 +1361,13 @@ HSEROUTSTRN?B macro Bin
     endm
 HSEROUTJ_USED = 1
 SEROUT2STRN_USED = 1
+
+HSEROUTDEC? macro
+        MOVE?CW HSEROUTJ, R8
+        L?CALL  SEROUT2DEC
+    endm
+HSEROUTJ_USED = 1
+SEROUT2DEC_USED = 1
 
 HSEROUTSDEC? macro
         MOVE?CW HSEROUTJ, R8
@@ -1338,48 +1384,13 @@ I2CDATA?T macro Regin, Bitin
         BIT?R1  Regin, Bitin
     endm
 
+I2CCOUNT?B macro Bin
+        MOVE?BB Bin, R4 + 1
+    endm
+
 I2CCOUNT?C macro Cin
         MOVE?CB Cin, R4 + 1
     endm
-
-I2CREAD?B macro Bout
-        L?CALL  I2CREAD
-        MOVE?AB Bout
-    endm
-I2CREAD_USED = 1
-
-I2CREAD?N macro Nout
-        L?CALL  I2CREAD
-        MOVE?AB Nout + 3
-        L?CALL  I2CREAD
-        MOVE?AB Nout + 2
-        L?CALL  I2CREAD
-        MOVE?AB Nout + 1
-        L?CALL  I2CREAD
-        MOVE?AB Nout
-    endm
-I2CREAD_USED = 1
-
-I2CREAD?W macro Wout
-        L?CALL  I2CREAD
-        MOVE?AB Wout + 1
-        L?CALL  I2CREAD
-        MOVE?AB Wout
-    endm
-I2CREAD_USED = 1
-
-I2CREADS?T macro Regout, Bitout
-        L?CALL  I2CREADS
-        MOVE?AT Regout, Bitout
-    endm
-I2CREAD_USED = 1
-
-I2CREADSTR?B macro Bin
-	MOVE?CB	high (Bin), FSR2H
-        MOVE?CA	low (Bin)
-        L?CALL  I2CREADSTR
-    endm
-I2CREADSTR_USED = 1
 
 I2CREADSTRS?B macro Bin
 	MOVE?CB	high (Bin), FSR2H
@@ -1400,18 +1411,6 @@ I2CWRITE?C macro Cin
         L?CALL  I2CWRITE
     endif
         MOVE?CA low (Cin)
-        L?CALL  I2CWRITE
-    endm
-I2CWRITE_USED = 1
-
-I2CWRITE?N macro Nin
-        MOVE?NA Nin + 3
-        L?CALL  I2CWRITE
-        MOVE?NA Nin + 2
-        L?CALL  I2CWRITE
-        MOVE?NA Nin + 1
-        L?CALL  I2CWRITE
-        MOVE?NA Nin
         L?CALL  I2CWRITE
     endm
 I2CWRITE_USED = 1
@@ -1439,31 +1438,6 @@ I2CWRITES?C macro Cin
         L?CALL  I2CWRITES
     endm
 I2CWRITE_USED = 1
-
-I2CWRITES?N macro Nin
-        MOVE?NA Nin + 3
-        L?CALL  I2CWRITE
-        MOVE?NA Nin + 2
-        L?CALL  I2CWRITE
-        MOVE?NA Nin + 1
-        L?CALL  I2CWRITE
-        MOVE?NA Nin
-        L?CALL  I2CWRITES
-    endm
-I2CWRITE_USED = 1
-
-I2CWRITES?T macro Regin, Bitin
-        MOVE?TA Regin, Bitin
-        L?CALL  I2CWRITES
-    endm
-I2CWRITE_USED = 1
-
-I2CWRITESTR?B macro Bin
-	MOVE?CB	high (Bin), FSR2H
-        MOVE?CA	low (Bin)
-        L?CALL  I2CWRITESTR
-    endm
-I2CWRITESTR_USED = 1
 
 I2CWRITESTRS?B macro Bin
 	MOVE?CB	high (Bin), FSR2H

@@ -30,12 +30,12 @@ ifeq ($(TYPE_IMAGE), DEBUG_RUN)
 IMAGE_TYPE=debug
 OUTPUT_SUFFIX=cof
 DEBUGGABLE_SUFFIX=cof
-FINAL_IMAGE=dist/${CND_CONF}/${IMAGE_TYPE}/firmware.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}
+FINAL_IMAGE=dist/${CND_CONF}/${IMAGE_TYPE}/firmware.${IMAGE_TYPE}.${OUTPUT_SUFFIX}
 else
 IMAGE_TYPE=production
 OUTPUT_SUFFIX=hex
 DEBUGGABLE_SUFFIX=cof
-FINAL_IMAGE=dist/${CND_CONF}/${IMAGE_TYPE}/firmware.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}
+FINAL_IMAGE=dist/${CND_CONF}/${IMAGE_TYPE}/firmware.${IMAGE_TYPE}.${OUTPUT_SUFFIX}
 endif
 
 # Object Directory
@@ -75,7 +75,7 @@ FIXDEPS=fixDeps
 ifneq ($(INFORMATION_MESSAGE), )
 	@echo $(INFORMATION_MESSAGE)
 endif
-	${MAKE}  -f nbproject/Makefile-default.mk dist/${CND_CONF}/${IMAGE_TYPE}/firmware.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}
+	${MAKE}  -f nbproject/Makefile-default.mk dist/${CND_CONF}/${IMAGE_TYPE}/firmware.${IMAGE_TYPE}.${OUTPUT_SUFFIX}
 
 PATH:=C:/Program Files (x86)/Microchip/MPLABX/mplab_ide/mplab_ide/modules/../../../mpasmx:$(PATH)
 # ------------------------------------------------------------------------------------
@@ -95,15 +95,15 @@ endif
 # ------------------------------------------------------------------------------------
 # Rules for buildStep: copylastcof
 ifeq ($(TYPE_IMAGE), DEBUG_RUN)
-dist/${CND_CONF}/${IMAGE_TYPE}/firmware.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}: ${OBJECTFILES}  nbproject/Makefile-${CND_CONF}.mk    
+dist/${CND_CONF}/${IMAGE_TYPE}/firmware.${IMAGE_TYPE}.${OUTPUT_SUFFIX}: ${OBJECTFILES}  nbproject/Makefile-${CND_CONF}.mk    
 	${MKDIR} dist/${CND_CONF}/${IMAGE_TYPE} 
-	${CP} firmware.COF dist/${CND_CONF}/${IMAGE_TYPE}/firmware.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX} 
+	${CP} firmware.COF dist/${CND_CONF}/${IMAGE_TYPE}/firmware.${IMAGE_TYPE}.${OUTPUT_SUFFIX} 
 	${RM} firmware.COF
 else
-dist/${CND_CONF}/${IMAGE_TYPE}/firmware.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}: ${OBJECTFILES}  nbproject/Makefile-${CND_CONF}.mk   
+dist/${CND_CONF}/${IMAGE_TYPE}/firmware.${IMAGE_TYPE}.${OUTPUT_SUFFIX}: ${OBJECTFILES}  nbproject/Makefile-${CND_CONF}.mk   
 	${MKDIR} dist/${CND_CONF}/${IMAGE_TYPE} 
-	${CP} firmware.HEX dist/${CND_CONF}/${IMAGE_TYPE}/firmware.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX} 
-	${CP} firmware.COF dist/${CND_CONF}/${IMAGE_TYPE}/firmware.X.${IMAGE_TYPE}.${DEBUGGABLE_SUFFIX} 
+	${CP} firmware.HEX dist/${CND_CONF}/${IMAGE_TYPE}/firmware.${IMAGE_TYPE}.${OUTPUT_SUFFIX} 
+	${CP} firmware.COF dist/${CND_CONF}/${IMAGE_TYPE}/firmware.${IMAGE_TYPE}.${DEBUGGABLE_SUFFIX} 
 	${RM} firmware.COF
 endif
 

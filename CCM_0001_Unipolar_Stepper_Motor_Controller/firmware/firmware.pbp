@@ -12,8 +12,10 @@
 Disable Interrupt
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;DEVICE CONFIGURATON (PICBASIC)
-DEFINE	Loader_Used		1		; leave bottom 4 program memory address spaces for bootloader program (ds30 free version)
 DEFINE  OSC 			4     	; Using a 4 MHz oscillator (the truth!)
+DEFINE	I2C_SCLOUT		1
+DEFINE	I2C_HOLD		1
+DEFINE 	I2C_SLOW 		1
 DEFINE 	HSER_RCSTA 		90h 	; enable serial port receive
 DEFINE 	HSER_TXSTA 		20h		; enable serial port transmit
 DEFINE 	HSER_BAUD 		4800	; serial port baud rate (limited by 4MHz osc.)
@@ -33,8 +35,7 @@ include "Includes\Interrupts.pbp"				; interrupt setup
 Data @0,1										; first time starting flag (only written when first programmed)
 
 Start:                               ;
-	ArrayWrite Firmware,["1.3"]
-
+	ArrayWrite Firmware,["1.5"]
 	gosub		SetupIO
 	gosub		TurnMotorOff
 	gosub		GivePICbus
@@ -45,25 +46,17 @@ Start:                               ;
 	I2Cwrite	I2Cdata,I2Cclk,lcdI2Caddress,["Stepper Controller  "]
 	gosub		SetCursorLine2
 	I2Cwrite	I2Cdata,I2Cclk,lcdI2Caddress,["v",STR Firmware \FirmwareLength]
-	pause		2000
-	gosub		ClearLCD
-	I2Cwrite	I2Cdata,I2Cclk,lcdI2Caddress,["Setting Up...       "]
 	pause		1000
-
 	gosub		SetupRTC						; configure the real time clock		
-
-	gosub		ClearLCD
 	Read		0,FirstTimeOn					; read in address 0 of internal eeprom (written as 1 during initial programming only)
 	If	FirstTimeOn=Yes then 
-	 	I2Cwrite	I2Cdata,I2Cclk,lcdI2Caddress,["Loading defaults   "]
-		gosub		SetValuesToDefault
-		gosub		SaveSettings
+		gosub	SetValuesToDefault
+		gosub	SaveSettings
 		FirstTimeOn=No					; clear the first time starting flag
 		Write	0,FirstTimeOn				; and save that to the internal eeprom
 	Else
-	 	I2Cwrite	I2Cdata,I2Cclk,lcdI2Caddress,["Restoring settings  "]
-		gosub		RestoreSettings
-	EndIf	
+		gosub	RestoreSettings
+	EndIf
 	pause		1000
 
     Setpoint_L = Position_L                 ; start with no position error
@@ -71,14 +64,13 @@ Start:                               ;
 	pause		10							; allow motor to settle
 	gosub		ResetCounter
 	gosub		DisablePushLights
-	limit	=	No							; assume motor not at limit
 
 	TempFeedbackOn	=	FeedbackOn + 1		; ensure mismatch for display test
 	TempSetpoint_L	=	Setpoint_L + 1
 	TempPosition_L	=	Position_L + 1
 	gosub		ClearLCD
-	If Mode>9 then Mode=Manual
 
+	gosub		SetupInterrupts
 	gosub		EnableInterrupts
 
 goto			Main						; Assume normal operation
@@ -140,7 +132,7 @@ ManualMode:
 	gosub		ClearLCD
 	gosub		ManualDisplay
 ManualLoop:
-    gosub		CheckForModeChange                          ; abort correction process by changing the mode
+    gosub		CheckForModeChange              ; abort correction process by changing the mode
 	gosub       CorrectPosition
 
 	Button 		Right,0,10,1,Ri,1,ManualRight	; pin, down, delay, rate, variable, action, label
@@ -400,7 +392,7 @@ CorrectPositionLoop:
 			limit = No
 		EndIf
 	EndIf		
-;    pause       2                                       ; small delay to allow motor to keep up (make longer if updatedisplay is commented)
+;    pause       2                                      ; small delay to allow motor to keep up (make longer if updatedisplay is commented)
 	goto		CorrectPositionLoop						; keep looping until no step error or a limit is reached
 
 ExitCorrectPosition:
@@ -429,6 +421,67 @@ Return
 ;****************************************************************************
 ;****************************************************************************
 Disable Interrupt					; disable interrupts below this
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Setup inputs and outputs and configure ports
+SetupIO:
+; use interrupt flags for pushbuttons to indicate button pushes, but don't use the interrupt
+	INTEDG0		=	0			; interrupt flags get set on falling edge of external signals RB0:RB1
+	INTEDG1		=	0			; right/left pushbuttons available for manually stepping the motor
+; setup timer0 as a counter of "positive" steps (to calculate desired position when in external mode)
+	T08BIT		=	0			; 16 bit mode
+	T0CS		=	1			; external clock source (pin)
+	T0SE		=	0			; clocks on rising edges
+	PSA			=	1			; no prescalar
+	TMR0ON		=	1			; enable timer0 module
+; setup timer1 as a counter of "negative" steps (to calculate desired position when in external mode)
+	TMR1CS1		=	1			; timer1 counts regardless of gate function/state
+	TMR1CS0		=	0			; timer1 clock is from pin (or oscillator, depending on SOSCEN bit)
+	T1CKPS1		=	0			; no prescalar
+	T1CKPS0		=	0
+	T1SOSCEN	=	0			; SOSC (secondary oscillator) is disabled, external clock from the T3CKl pin (rising edge)
+	T1SYNC_		=	1			; do not synchronize external clock input
+	T1RD16		=	0			; read Timer1 as two 8-bit registers
+	TMR1ON		=	1			; enable timer1 module
+; Default PIC output values (not set elsewhere):
+	ReadCounter_	=	1						; not reading the counter
+	ResetCounter_	=	1						; not resetting the encoder
+	DataSelect		=	0						; doesn't matter
+	PicStep			=	0
+	PicDirection	=	0
+Return
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+SetValuesToDefault:								; set default values of variables
+	gosub		ClearLCD
+ 	I2Cwrite	I2Cdata,I2Cclk,lcdI2Caddress,["Loading defaults   "]
+	Time[Seconds] 	= 	0
+	Time[Minutes]	=	0
+	Time[Hours]		=	13
+	gosub				UpdateRTC
+
+	DoTime[Seconds]	=	0
+	DoTime[Minutes]	=	0
+	DoTime[Hours]	=	12
+	Rotate_L		=	1						; rotate in positive sense on high input (state rotate mode only)
+	Limit			=	0						; motor not at limit
+	AtLimit			=	Nothing					; do nothing if mode reaches software position limit
+	TimeMatch		=	Secs
+
+	OpMode			=	Manual
+    StepStyle       =   FullStep
+	FeedbackOn		=	No
+	Delay_W			=	10						; default delay between steps, ms
+	MinPos_L		=	-(100000*C)				; For no position limits, make both zero
+	MaxPos_L		=	100000*C				; remember, the controller deals in counts, not steps
+	gosub				ClearCounters			; clear trigger counters
+	Position_L 		= 	0
+	Setpoint_L 		= 	0
+	Destination_L 	= 	0
+	Steps_L			=	50*C
+	DoTriggers_W	=	10
+
+Return
 
 CheckForModeChange:
     If Left=0 AND Right=0 then

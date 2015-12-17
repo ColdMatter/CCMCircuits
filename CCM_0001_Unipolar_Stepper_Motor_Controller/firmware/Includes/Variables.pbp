@@ -110,8 +110,6 @@ Ascii			VAR	Byte
 Decimal			VAR	Byte
 ArgumentLength	VAR	Byte
 CommandLength	VAR	Byte
-;State			VAR	Byte
-;State_Temp		VAR	Byte
 Negative		VAR	Byte
 Ri				VAR	Byte		; button loop tracking variables
 Li				VAR	Byte
@@ -175,13 +173,15 @@ CommandBuffer	VAR	Byte[BufferLength]
 ArgumentBuffer	VAR	Byte[BufferLength]
 DataBuffer		VAR	Byte[BufferLength]
 
-; EEPROM Variables					
+; EEPROM Variables
+eeBuffer		VAR	Byte[128]
+DataLength		VAR	Byte
 eeI2Cbot		VAR	Byte					; eeprom bottom bank I2C address, must be a variable
 eeI2Cbot	=	%10100000					 							
 eeI2Ctop		VAR	Byte					; eeprom top bank I2C address, must be a variable
 eeI2Ctop	=	%10101000					; only the bottom bank is used in this project 
 eeAddress 		VAR	Word					; variable address for accessing EEPROM internal locations (memory address)
-PageSize   		CON	128						; writing entire pages (128 bytes) allows sequential reads/writes	
+PageSize   		CON	128						; writing within page boundaries (128 bytes) allows sequential reads/writes
 
 ; LCD variables:
 lcdI2Caddress	VAR	Byte
@@ -194,71 +194,6 @@ rtcI2Caddress =	$D0
 rtcAddress		VAR	Byte 		; internal etc memory address   
 
 goto Variables_Done
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; SUBROUTINES BELOW THIS
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; Setup inputs and outputs and configure ports
-SetupIO:
-; use interrupt flags for pushbuttons to indicate button pushes, but don't use the interrupt
-	INTEDG0		=	0			; interrupt flags get set on falling edge of external signals RB0:RB1
-	INTEDG1		=	0			; right/left pushbuttons available for manually stepping the motor
-
-; setup timer0 as a counter of "positive" steps (to calculate desired position when in external mode)
-	T08BIT		=	0			; 16 bit mode
-	T0CS		=	1			; external clock source (pin)
-	T0SE		=	0			; clocks on rising edges
-	PSA			=	1			; no prescalar
-	TMR0ON		=	1			; enable timer0 module
-
-; setup timer1 as a counter of "negative" steps (to calculate desired position when in external mode)
-	TMR1CS1		=	1			; timer1 counts regardless of gate function/state
-	TMR1CS0		=	0			; timer1 clock is from pin (or oscillator, depending on SOSCEN bit)
-	T1CKPS1		=	0			; no prescalar
-	T1CKPS0		=	0
-	T1SOSCEN	=	0			; SOSC (secondary oscillator) is disabled, external clock from the T3CKl pin (rising edge)
-	T1SYNC_		=	1			; do not synchronize external clock input
-	T1RD16		=	0			; read Timer1 as two 8-bit registers
-	TMR1ON		=	1			; enable timer1 module
-
-; Default PIC output values (not set elsewhere):
-	ReadCounter_	=	1						; not reading the counter
-	ResetCounter_	=	1						; not resetting the encoder
-	DataSelect		=	0						; doesn't matter
-	PicStep			=	0
-	PicDirection	=	0
-Return
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-SetValuesToDefault:								; set default values of variables
-	Time[Seconds] 	= 	0
-	Time[Minutes]	=	0
-	Time[Hours]		=	13
-	gosub				UpdateRTC
-
-	DoTime[Seconds]	=	0
-	DoTime[Minutes]	=	0
-	DoTime[Hours]	=	12
-	Rotate_L		=	1						; rotate in positive sense on high input (state rotate mode only)
-	AtLimit			=	Nothing					; do nothing if mode reaches software position limit
-	TimeMatch		=	Secs
-
-	OpMode			=	Manual
-    StepStyle       =   FullStep
-	FeedbackOn		=	No				
-	Delay_W			=	10 max MinDelay			; default delay between steps, ms
-	MinPos_L		=	-100000*C				; For no position limits, make both zero
-	MaxPos_L		=	100000*C				; remember, the controller deals in counts, not steps					
-	gosub				ClearCounters			; clear trigger counters
-	Position_L 		= 	0
-	Setpoint_L 		= 	0
-	Destination_L 	= 	0
-	Steps_L			=	50*C
-	DoTriggers_W	=	100
-Return
-
 
 Variables_Done:
 
