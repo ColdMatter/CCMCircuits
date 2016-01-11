@@ -1,0 +1,3 @@
+# CCM_0006 Magnetic field sensor
+
+This is a battery-powered circuit designed to help measure the strong magnetic fields produced by the Zeeman-Sisphus decelerator magnet arrays.  The circuits consists of a single-turn pickup coil (copper trace), and RMS-to-DC converter, summer, and VtoF converter.  The idea is to spin the circuit (using something like the dremmel tool) with the pickup coil in the bore of the magnet arrays.  The LED will flash at a frequency proportional to the field strength and the output signal can be picked up on a photodiode.  Both the rotation rate and magnetic field strength should be able to be derived from the photodiode pickup signal.  
