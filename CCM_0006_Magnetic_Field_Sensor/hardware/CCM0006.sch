@@ -2540,7 +2540,7 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD820.pdf</descr
 <part name="FRAME1" library="frames" deviceset="A4L-LOC" device=""/>
 <part name="IC1" library="noah" deviceset="AD654" device=""/>
 <part name="SUPPLY1" library="supply2" deviceset="AGND" device="" value="GND"/>
-<part name="R1" library="ic" deviceset="RESISTOR" device="0402" value="10k"/>
+<part name="R1" library="ic" deviceset="RESISTOR" device="0402" value="1k"/>
 <part name="P+1" library="SparkFun" deviceset="VCC" device=""/>
 <part name="P+2" library="SparkFun" deviceset="VCC" device=""/>
 <part name="C1" library="ic" deviceset="CAPACITOR" device="0402" value="0.1u"/>
@@ -2588,7 +2588,7 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD820.pdf</descr
 <part name="SUPPLY15" library="supply2" deviceset="AGND" device="" value="GND"/>
 <part name="C7" library="ic" deviceset="CAPACITOR" device="0805" value="10u"/>
 <part name="C13" library="ic" deviceset="CAPACITOR" device="0805" value="10u"/>
-<part name="IC2" library="analog-devices" deviceset="AD820" device="R" value="LM6061"/>
+<part name="IC2" library="analog-devices" deviceset="AD820" device="R" value="LMC6061"/>
 <part name="LED1" library="led" deviceset="LED" device="3MM"/>
 <part name="C10" library="ic" deviceset="CAPACITOR" device="0402" value="0.1u"/>
 </parts>
