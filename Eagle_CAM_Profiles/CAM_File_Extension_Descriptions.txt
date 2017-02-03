@@ -4,6 +4,7 @@ Extension Description
 .drd	drill 
 .dri drill station info
 .gpi photoplotter info file
+.oln board outline
 .plc silk screen top (component) side
 .pls silk screen bottom (solder) side
 .sol copper bottom (solder) side
