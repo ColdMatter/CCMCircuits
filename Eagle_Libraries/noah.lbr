@@ -2578,6 +2578,19 @@ wide body 7.5 mm</description>
 <wire x1="-1.905" y1="1.651" x2="-1.651" y2="1.905" width="0.127" layer="21"/>
 <wire x1="-1.651" y1="1.905" x2="1.905" y2="1.905" width="0.127" layer="21"/>
 </package>
+<package name="BNC_VERTICAL">
+<description>Vertical BNC connector, e.g. Digikey A32262-ND</description>
+<wire x1="0" y1="0" x2="0" y2="15.24" width="0.127" layer="21"/>
+<wire x1="0" y1="15.24" x2="15.24" y2="15.24" width="0.127" layer="21"/>
+<wire x1="15.24" y1="15.24" x2="15.24" y2="0" width="0.127" layer="21"/>
+<wire x1="15.24" y1="0" x2="0" y2="0" width="0.127" layer="21"/>
+<pad name="SIGNAL" x="7.62" y="7.62" drill="0.9"/>
+<pad name="GND" x="5.08" y="7.62" drill="0.9"/>
+<pad name="MOUNT2" x="2.54" y="2.54" drill="2.2"/>
+<pad name="MOUNT1" x="12.7" y="12.7" drill="2.2"/>
+<text x="16.51" y="13.97" size="1.27" layer="25">&gt;Name</text>
+<text x="16.51" y="11.43" size="1.27" layer="27">&gt;Value</text>
+</package>
 </packages>
 <symbols>
 <symbol name="PIC18F46K80-X/PT">
@@ -3703,6 +3716,13 @@ wide body 7.5 mm</description>
 <text x="-26.67" y="25.4" size="1.778" layer="96">&gt;Value</text>
 <text x="-19.05" y="24.13" size="1.778" layer="95" rot="R180">&gt;Name</text>
 <circle x="-11.43" y="10.16" radius="1.27" width="0.254" layer="94"/>
+</symbol>
+<symbol name="BNC_VERTICAL">
+<pin name="SIGNAL" x="7.62" y="0" visible="off" rot="R180"/>
+<pin name="GND" x="0" y="-6.35" visible="off" length="short" rot="R90"/>
+<wire x1="0" y1="3.81" x2="0" y2="-3.81" width="0.254" layer="94" curve="-180"/>
+<text x="0" y="7.62" size="1.27" layer="95">&gt;Name</text>
+<text x="0" y="5.08" size="1.27" layer="96">&gt;Value</text>
 </symbol>
 </symbols>
 <devicesets>
@@ -5673,6 +5693,22 @@ male, 32 pins, type B, row A, grid 2.54 mm</description>
 <connect gate="G$1" pin="SUM" pad="P20"/>
 <connect gate="G$1" pin="VCC" pad="P17"/>
 <connect gate="G$1" pin="VEE" pad="P10"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+</devices>
+</deviceset>
+<deviceset name="BNC_VERTICAL" prefix="X">
+<gates>
+<gate name="G$1" symbol="BNC_VERTICAL" x="0" y="0"/>
+</gates>
+<devices>
+<device name="" package="BNC_VERTICAL">
+<connects>
+<connect gate="G$1" pin="GND" pad="GND"/>
+<connect gate="G$1" pin="SIGNAL" pad="SIGNAL"/>
 </connects>
 <technologies>
 <technology name=""/>
