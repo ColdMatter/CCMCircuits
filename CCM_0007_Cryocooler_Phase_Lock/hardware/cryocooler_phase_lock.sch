@@ -6,7 +6,7 @@
 <setting alwaysvectorfont="no"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.025" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
+<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
 <layer number="2" name="Route2" color="1" fill="3" visible="no" active="no"/>
@@ -1165,9 +1165,9 @@ Source: Fairchild .. BAT54.pdf</description>
 <text x="28.575" y="187.96" size="2.54" layer="97">switch out power connector for surface-mount version
 surface mount jumper for testing instead of through-hole one
 new 3.3V stepdown circuit</text>
-<text x="7.62" y="80.645" size="1.778" layer="150">From electret condenser microphone
+<text x="7.62" y="75.565" size="1.778" layer="150">From electret condenser microphone
 e.g. CMA-4544PF-W</text>
-<text x="36.83" y="153.67" size="1.778" layer="150">power input
+<text x="36.83" y="151.13" size="1.778" layer="150">power input
 3.3V at ~1A</text>
 <text x="108.585" y="73.025" size="1.778" layer="150">optional high pass
 will block DC</text>
@@ -1535,19 +1535,9 @@ will block DC</text>
 </net>
 <net name="DELAY_ADJUST" class="0">
 <segment>
-<pinref part="U3" gate="G$1" pin="A1"/>
-<pinref part="R7" gate="R$1" pin="1"/>
-<pinref part="R8" gate="R$1" pin="2"/>
-<wire x1="124.46" y1="130.175" x2="127" y2="130.175" width="0.1524" layer="91"/>
-<wire x1="127" y1="130.175" x2="131.445" y2="130.175" width="0.1524" layer="91"/>
-<wire x1="131.445" y1="130.175" x2="131.445" y2="128.27" width="0.1524" layer="91"/>
-<wire x1="131.445" y1="130.175" x2="140.97" y2="130.175" width="0.1524" layer="91"/>
-<wire x1="140.97" y1="130.175" x2="140.97" y2="104.14" width="0.1524" layer="91"/>
-<junction x="131.445" y="130.175"/>
-<wire x1="140.97" y1="104.14" x2="160.02" y2="104.14" width="0.1524" layer="91"/>
-<pinref part="D1" gate="G$1" pin="C"/>
-<wire x1="127" y1="125.73" x2="127" y2="130.175" width="0.1524" layer="91"/>
-<junction x="127" y="130.175"/>
+<pinref part="R7" gate="R$1" pin="2"/>
+<wire x1="113.03" y1="130.175" x2="114.3" y2="130.175" width="0.1524" layer="91"/>
+<pinref part="X3" gate="G$1" pin="SIGNAL"/>
 </segment>
 </net>
 <net name="N$1" class="0">
@@ -1623,14 +1613,7 @@ will block DC</text>
 <junction x="135.89" y="99.06"/>
 </segment>
 </net>
-<net name="N$7" class="0">
-<segment>
-<pinref part="R7" gate="R$1" pin="2"/>
-<wire x1="113.03" y1="130.175" x2="114.3" y2="130.175" width="0.1524" layer="91"/>
-<pinref part="X3" gate="G$1" pin="SIGNAL"/>
-</segment>
-</net>
-<net name="N$8" class="0">
+<net name="VOLUME_INDICATOR" class="0">
 <segment>
 <pinref part="X4" gate="G$1" pin="SIGNAL"/>
 <pinref part="R9" gate="R$1" pin="2"/>
@@ -1653,7 +1636,7 @@ will block DC</text>
 <wire x1="195.58" y1="134.62" x2="212.09" y2="134.62" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="N$11" class="0">
+<net name="SYNC_OUT" class="0">
 <segment>
 <pinref part="R11" gate="R$1" pin="1"/>
 <pinref part="X5" gate="G$1" pin="SIGNAL"/>
@@ -1669,11 +1652,28 @@ will block DC</text>
 <wire x1="207.01" y1="113.03" x2="213.36" y2="113.03" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="N$13" class="0">
+<net name="TRIGGER_OUT" class="0">
 <segment>
 <pinref part="R12" gate="R$1" pin="1"/>
 <pinref part="X6" gate="G$1" pin="SIGNAL"/>
 <wire x1="223.52" y1="113.03" x2="224.79" y2="113.03" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N10" class="0">
+<segment>
+<pinref part="U3" gate="G$1" pin="A1"/>
+<pinref part="R7" gate="R$1" pin="1"/>
+<pinref part="R8" gate="R$1" pin="2"/>
+<wire x1="124.46" y1="130.175" x2="127" y2="130.175" width="0.1524" layer="91"/>
+<wire x1="127" y1="130.175" x2="131.445" y2="130.175" width="0.1524" layer="91"/>
+<wire x1="131.445" y1="130.175" x2="131.445" y2="128.27" width="0.1524" layer="91"/>
+<wire x1="131.445" y1="130.175" x2="140.97" y2="130.175" width="0.1524" layer="91"/>
+<wire x1="140.97" y1="130.175" x2="140.97" y2="104.14" width="0.1524" layer="91"/>
+<junction x="131.445" y="130.175"/>
+<wire x1="140.97" y1="104.14" x2="160.02" y2="104.14" width="0.1524" layer="91"/>
+<pinref part="D1" gate="G$1" pin="C"/>
+<wire x1="127" y1="125.73" x2="127" y2="130.175" width="0.1524" layer="91"/>
+<junction x="127" y="130.175"/>
 </segment>
 </net>
 </nets>
