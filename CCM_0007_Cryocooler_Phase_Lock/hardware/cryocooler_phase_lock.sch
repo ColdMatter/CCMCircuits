@@ -6,7 +6,7 @@
 <setting alwaysvectorfont="no"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
+<grid distance="0.025" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
 <layer number="2" name="Route2" color="1" fill="3" visible="no" active="no"/>
@@ -1109,10 +1109,7 @@ Source: Fairchild .. BAT54.pdf</description>
 <part name="U3" library="Spark" deviceset="PHOTON" device="_WITH_HEADERS"/>
 <part name="C9" library="acrooptics" deviceset="C" device="0805" value="4.7u"/>
 <part name="SUPPLY5" library="supply2" deviceset="GND" device=""/>
-<part name="X1" library="con-molex" deviceset="22-23-2021" device=""/>
 <part name="P+1" library="SparkFun" deviceset="3.3V" device=""/>
-<part name="P+2" library="SparkFun" deviceset="3.3V" device=""/>
-<part name="SUPPLY1" library="supply2" deviceset="GND" device=""/>
 <part name="X2" library="con-molex" deviceset="22-23-2021" device=""/>
 <part name="P+3" library="SparkFun" deviceset="3.3V" device=""/>
 <part name="SUPPLY3" library="supply2" deviceset="GND" device=""/>
@@ -1139,8 +1136,6 @@ Source: Fairchild .. BAT54.pdf</description>
 <part name="SUPPLY9" library="supply2" deviceset="GND" device=""/>
 <part name="SUPPLY10" library="supply2" deviceset="GND" device=""/>
 <part name="Q1" library="microbuilder" deviceset="ELECTRET" device="" value="CMA-4544PF-W"/>
-<part name="C10" library="acrooptics" deviceset="C" device="0603" value="0.1u"/>
-<part name="C11" library="acrooptics" deviceset="C" device="0805" value="4.7u"/>
 <part name="X4" library="noah" deviceset="BNC_VERTICAL" device=""/>
 <part name="X5" library="noah" deviceset="BNC_VERTICAL" device=""/>
 <part name="X6" library="noah" deviceset="BNC_VERTICAL" device=""/>
@@ -1162,13 +1157,8 @@ Source: Fairchild .. BAT54.pdf</description>
 <description>P1 Module</description>
 <plain>
 <text x="-494.03" y="135.255" size="1.778" layer="97" rot="R180"></text>
-<text x="28.575" y="187.96" size="2.54" layer="97">switch out power connector for surface-mount version
-surface mount jumper for testing instead of through-hole one
-new 3.3V stepdown circuit</text>
 <text x="7.62" y="75.565" size="1.778" layer="150">From electret condenser microphone
 e.g. CMA-4544PF-W</text>
-<text x="36.83" y="151.13" size="1.778" layer="150">power input
-3.3V at ~1A</text>
 <text x="108.585" y="73.025" size="1.778" layer="150">optional high pass
 will block DC</text>
 <text x="132.08" y="75.565" size="1.778" layer="150">optional low pass</text>
@@ -1179,6 +1169,10 @@ will block DC</text>
 (0--3.3V)</text>
 <text x="233.68" y="133.985" size="1.778" layer="150">sync out</text>
 <text x="234.95" y="112.395" size="1.778" layer="150">trigger out</text>
+<text x="138.43" y="160.655" size="1.778" layer="150">circuit powered from on-board Photon regulator
+which gets 5V from USB connection
+Plug into computer USB bus or use dedicated 
+supply (e.g. Farnell 2451864).</text>
 </plain>
 <instances>
 <instance part="FRAME1" gate="G$1" x="0" y="0"/>
@@ -1197,13 +1191,7 @@ will block DC</text>
 <instance part="SUPPLY5" gate="GND" x="155.575" y="146.05" smashed="yes" rot="MR0">
 <attribute name="VALUE" x="152.4" y="144.145" size="1.778" layer="96" rot="MR180"/>
 </instance>
-<instance part="X1" gate="-1" x="58.42" y="154.94" rot="MR0"/>
-<instance part="X1" gate="-2" x="58.42" y="152.4" rot="MR0"/>
 <instance part="P+1" gate="G$1" x="212.09" y="156.21"/>
-<instance part="P+2" gate="G$1" x="60.96" y="159.385"/>
-<instance part="SUPPLY1" gate="GND" x="60.96" y="145.415" smashed="yes" rot="MR0">
-<attribute name="VALUE" x="62.865" y="142.24" size="1.778" layer="96" rot="MR0"/>
-</instance>
 <instance part="X2" gate="-1" x="29.21" y="101.6" rot="MR0"/>
 <instance part="X2" gate="-2" x="29.21" y="99.06" rot="MR0"/>
 <instance part="P+3" gate="G$1" x="31.75" y="119.38"/>
@@ -1290,14 +1278,6 @@ will block DC</text>
 <attribute name="NAME" x="20.955" y="90.805" size="1.778" layer="95"/>
 <attribute name="VALUE" x="32.385" y="87.63" size="1.778" layer="96" rot="R180"/>
 </instance>
-<instance part="C10" gate="G$1" x="69.85" y="154.305" smashed="yes">
-<attribute name="NAME" x="68.961" y="157.099" size="1.778" layer="95" rot="R180"/>
-<attribute name="VALUE" x="64.389" y="150.241" size="1.778" layer="96"/>
-</instance>
-<instance part="C11" gate="G$1" x="76.835" y="153.035" smashed="yes" rot="MR180">
-<attribute name="NAME" x="75.819" y="155.575" size="1.778" layer="95" rot="MR0"/>
-<attribute name="VALUE" x="75.819" y="150.749" size="1.778" layer="96" rot="MR0"/>
-</instance>
 <instance part="X4" gate="G$1" x="105.41" y="152.4" smashed="yes">
 <attribute name="NAME" x="105.41" y="156.845" size="1.27" layer="95"/>
 </instance>
@@ -1373,20 +1353,6 @@ will block DC</text>
 <pinref part="U3" gate="G$1" pin="GND@2"/>
 <wire x1="160.02" y1="149.86" x2="155.575" y2="149.86" width="0.1524" layer="91"/>
 <wire x1="155.575" y1="149.86" x2="155.575" y2="148.59" width="0.1524" layer="91"/>
-</segment>
-<segment>
-<pinref part="X1" gate="-2" pin="S"/>
-<pinref part="SUPPLY1" gate="GND" pin="GND"/>
-<wire x1="60.96" y1="152.4" x2="60.96" y2="149.225" width="0.1524" layer="91"/>
-<pinref part="C10" gate="G$1" pin="2"/>
-<wire x1="60.96" y1="149.225" x2="60.96" y2="147.955" width="0.1524" layer="91"/>
-<wire x1="69.85" y1="150.495" x2="69.85" y2="149.225" width="0.1524" layer="91"/>
-<wire x1="69.85" y1="149.225" x2="60.96" y2="149.225" width="0.1524" layer="91"/>
-<junction x="60.96" y="149.225"/>
-<pinref part="C11" gate="G$1" pin="1"/>
-<wire x1="69.85" y1="149.225" x2="76.835" y2="149.225" width="0.1524" layer="91"/>
-<wire x1="76.835" y1="149.225" x2="76.835" y2="150.495" width="0.1524" layer="91"/>
-<junction x="69.85" y="149.225"/>
 </segment>
 <segment>
 <pinref part="SUPPLY3" gate="GND" pin="GND"/>
@@ -1477,20 +1443,6 @@ will block DC</text>
 <wire x1="205.74" y1="154.94" x2="195.58" y2="154.94" width="0.1524" layer="91"/>
 <junction x="205.74" y="154.94"/>
 <pinref part="P+1" gate="G$1" pin="3.3V"/>
-</segment>
-<segment>
-<pinref part="X1" gate="-1" pin="S"/>
-<pinref part="P+2" gate="G$1" pin="3.3V"/>
-<wire x1="60.96" y1="154.94" x2="60.96" y2="158.115" width="0.1524" layer="91"/>
-<pinref part="C10" gate="G$1" pin="1"/>
-<wire x1="60.96" y1="158.115" x2="60.96" y2="159.385" width="0.1524" layer="91"/>
-<wire x1="69.85" y1="156.845" x2="69.85" y2="158.115" width="0.1524" layer="91"/>
-<wire x1="69.85" y1="158.115" x2="60.96" y2="158.115" width="0.1524" layer="91"/>
-<junction x="60.96" y="158.115"/>
-<pinref part="C11" gate="G$1" pin="2"/>
-<wire x1="69.85" y1="158.115" x2="76.835" y2="158.115" width="0.1524" layer="91"/>
-<wire x1="76.835" y1="158.115" x2="76.835" y2="156.845" width="0.1524" layer="91"/>
-<junction x="69.85" y="158.115"/>
 </segment>
 <segment>
 <pinref part="R1" gate="R$1" pin="2"/>
