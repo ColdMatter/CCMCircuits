@@ -4133,15 +4133,6 @@ high speed (Philips)</description>
 <technology name=""/>
 </technologies>
 </device>
-<device name="" package="SOD323_ST">
-<connects>
-<connect gate="G$1" pin="A" pad="A"/>
-<connect gate="G$1" pin="C" pad="C"/>
-</connects>
-<technologies>
-<technology name=""/>
-</technologies>
-</device>
 </devices>
 </deviceset>
 <deviceset name="BAT60J" prefix="D">
