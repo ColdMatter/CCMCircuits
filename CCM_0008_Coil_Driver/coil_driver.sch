@@ -6,7 +6,7 @@
 <setting alwaysvectorfont="no"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.025" unitdist="inch" unit="inch" style="lines" multiple="1" display="yes" altdistance="0.01" altunitdist="inch" altunit="inch"/>
+<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
 <layer number="2" name="Route2" color="1" fill="3" visible="no" active="no"/>
@@ -5553,7 +5553,7 @@ Basic SMA packaged diode. Good for reverse polarization protection. Common part 
 <part name="C1" library="acrooptics" deviceset="C" device="0603" value="1uF"/>
 <part name="R9" library="Fitch" deviceset="TRIM_US-" device="B90P" value="20k"/>
 <part name="SUPPLY3" library="supply2" deviceset="GND" device=""/>
-<part name="C2" library="acrooptics" deviceset="C" device="0603" value="0.1uF"/>
+<part name="C2" library="acrooptics" deviceset="C" device="0603" value="0.1u"/>
 <part name="IC14" library="noah" deviceset="AD825_A" device="" value="AD825"/>
 <part name="P-14" library="supply1" deviceset="-15V" device=""/>
 <part name="P-15" library="supply1" deviceset="-15V" device=""/>
@@ -5564,7 +5564,7 @@ Basic SMA packaged diode. Good for reverse polarization protection. Common part 
 <part name="SUPPLY4" library="supply2" deviceset="GND" device=""/>
 <part name="R53" library="Fitch" deviceset="TRIM_US-" device="B90P" value="20k"/>
 <part name="SUPPLY5" library="supply2" deviceset="GND" device=""/>
-<part name="C4" library="acrooptics" deviceset="C" device="0603" value="0.1uF"/>
+<part name="C4" library="acrooptics" deviceset="C" device="0603" value="0.1u"/>
 <part name="IC15" library="noah" deviceset="AD825_A" device="" value="AD825"/>
 <part name="P-17" library="supply1" deviceset="-15V" device=""/>
 <part name="P+14" library="supply1" deviceset="+15V" device=""/>
@@ -5687,7 +5687,7 @@ Basic SMA packaged diode. Good for reverse polarization protection. Common part 
 <part name="SUPPLY14" library="supply2" deviceset="GND" device=""/>
 <part name="SUPPLY28" library="supply2" deviceset="GND" device=""/>
 <part name="S1" library="noah" deviceset="71BDF30" device=""/>
-<part name="C72" library="acrooptics" deviceset="C" device="0603" value="100nF"/>
+<part name="C72" library="acrooptics" deviceset="C" device="0603" value="0.1u"/>
 <part name="C73" library="acrooptics" deviceset="C" device="0603" value="47nF"/>
 <part name="C74" library="acrooptics" deviceset="C" device="0603" value="22nF"/>
 <part name="C75" library="acrooptics" deviceset="C" device="0603" value="10nF"/>
@@ -5699,7 +5699,7 @@ Basic SMA packaged diode. Good for reverse polarization protection. Common part 
 <part name="C81" library="acrooptics" deviceset="C" device="0603" value="100pF"/>
 <part name="C82" library="acrooptics" deviceset="C" device="0603" value="47pF"/>
 <part name="S2" library="noah" deviceset="71BDF30" device=""/>
-<part name="C22" library="acrooptics" deviceset="C" device="0603" value="100nF"/>
+<part name="C22" library="acrooptics" deviceset="C" device="0603" value="0.1u"/>
 <part name="C71" library="acrooptics" deviceset="C" device="0603" value="47nF"/>
 <part name="C83" library="acrooptics" deviceset="C" device="0603" value="22nF"/>
 <part name="C84" library="acrooptics" deviceset="C" device="0603" value="10nF"/>

@@ -1,0 +1,13 @@
+﻿"Symbol";"Value";"Unit";
+"TraceParts.PartNumber";"10-18112016-088072";"";
+"REFERENCE";"3590S-4-102L";"";
+"TraceParts.PartTitle";"Precision potentiometer 1K 22mm 10-turn";"";
+"TraceParts.InstanceId";"10-18112016-0880725HYJIHTSGDIG9XQ5AQQ7I76CU";"";
+"DESIGN";"Precision potentiometer 1K 22mm 10-turn";"";
+"TraceParts.PartStatus";"Published";"";
+"TraceParts.PartStatusId";"";"";
+"SUPPLIER";"BOURNS";"";
+"TraceParts.PartVersion";"1.0.0";"";
+"TRACEPARTS";"TRACEPARTS";"";
+"TraceParts.PartLanguage";"en";"";
+"TraceParts.ClassPath";"BOURNS:/F_BOURNS/10-18112016-088072";"";
