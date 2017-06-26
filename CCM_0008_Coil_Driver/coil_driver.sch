@@ -6,7 +6,7 @@
 <setting alwaysvectorfont="no"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
+<grid distance="0.025" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
 <layer number="2" name="Route2" color="1" fill="3" visible="no" active="no"/>
@@ -5467,7 +5467,6 @@ Basic SMA packaged diode. Good for reverse polarization protection. Common part 
 <part name="SUPPLY16" library="supply2" deviceset="GND" device=""/>
 <part name="P-3" library="supply1" deviceset="-15V" device=""/>
 <part name="P+6" library="supply1" deviceset="+15V" device=""/>
-<part name="SUPPLY17" library="supply2" deviceset="GND" device=""/>
 <part name="R27" library="acrooptics" deviceset="R" device="0603" value="51.1"/>
 <part name="P+7" library="supply1" deviceset="+15V" device=""/>
 <part name="P-4" library="supply1" deviceset="-15V" device=""/>
@@ -5946,9 +5945,6 @@ Vmonitor &gt; 0 for "positive" current</text>
 </instance>
 <instance part="P+6" gate="1" x="106.045" y="75.565" smashed="yes">
 <attribute name="VALUE" x="103.505" y="78.105" size="1.778" layer="96"/>
-</instance>
-<instance part="SUPPLY17" gate="GND" x="142.24" y="17.78" smashed="yes" rot="MR0">
-<attribute name="VALUE" x="144.145" y="14.605" size="1.778" layer="96" rot="MR0"/>
 </instance>
 <instance part="R27" gate="R$1" x="161.29" y="24.13" smashed="yes" rot="R180">
 <attribute name="NAME" x="158.75" y="25.6286" size="1.778" layer="95"/>
@@ -6923,11 +6919,6 @@ Vmonitor &gt; 0 for "positive" current</text>
 <pinref part="SUPPLY16" gate="GND" pin="GND"/>
 <wire x1="118.745" y1="52.705" x2="121.285" y2="52.705" width="0.1524" layer="91"/>
 <wire x1="121.285" y1="52.705" x2="121.285" y2="50.165" width="0.1524" layer="91"/>
-</segment>
-<segment>
-<pinref part="SUPPLY17" gate="GND" pin="GND"/>
-<wire x1="142.24" y1="21.59" x2="142.24" y2="20.32" width="0.1524" layer="91"/>
-<pinref part="IC6" gate="P" pin="IN-"/>
 </segment>
 <segment>
 <pinref part="X1" gate="G$1" pin="2"/>
@@ -7964,13 +7955,6 @@ Vmonitor &gt; 0 for "positive" current</text>
 <wire x1="129.54" y1="26.67" x2="130.81" y2="26.67" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="N$24" class="0">
-<segment>
-<wire x1="154.94" y1="24.13" x2="156.21" y2="24.13" width="0.1524" layer="91"/>
-<pinref part="R27" gate="R$1" pin="2"/>
-<pinref part="IC6" gate="P" pin="OUT"/>
-</segment>
-</net>
 <net name="N$25" class="0">
 <segment>
 <pinref part="R27" gate="R$1" pin="1"/>
@@ -8909,6 +8893,19 @@ Vmonitor &gt; 0 for "positive" current</text>
 <pinref part="R25" gate="R$1" pin="1"/>
 <pinref part="IC6" gate="P" pin="IN+"/>
 <wire x1="140.97" y1="26.67" x2="142.24" y2="26.67" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$6" class="0">
+<segment>
+<pinref part="IC6" gate="P" pin="IN-"/>
+<wire x1="142.24" y1="21.59" x2="142.24" y2="7.62" width="0.1524" layer="91"/>
+<wire x1="154.94" y1="24.13" x2="155.575" y2="24.13" width="0.1524" layer="91"/>
+<pinref part="R27" gate="R$1" pin="2"/>
+<pinref part="IC6" gate="P" pin="OUT"/>
+<wire x1="155.575" y1="24.13" x2="156.21" y2="24.13" width="0.1524" layer="91"/>
+<wire x1="142.24" y1="7.62" x2="155.575" y2="7.62" width="0.1524" layer="91"/>
+<wire x1="155.575" y1="7.62" x2="155.575" y2="24.13" width="0.1524" layer="91"/>
+<junction x="155.575" y="24.13"/>
 </segment>
 </net>
 </nets>
