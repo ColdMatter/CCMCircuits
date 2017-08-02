@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="6.5.0">
+<eagle version="7.1.0">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
@@ -223,6 +223,24 @@ for TCCH-80+ choke</description>
 <smd name="P$1" x="-1.016" y="0.889" dx="1.27" dy="0.889" layer="1" rot="R90"/>
 <smd name="P$2" x="1.016" y="0.889" dx="1.27" dy="0.889" layer="1" rot="R90"/>
 <smd name="P$3" x="1.016" y="-0.889" dx="1.27" dy="0.889" layer="1" rot="R90"/>
+</package>
+<package name="A01BIDPAD">
+<description>&lt;b&gt;CASE STYLE A01&lt;/b&gt;&lt;p&gt;
+Source: minicircuits.com .. PBP-10.7+.pdf</description>
+<wire x1="-11.955" y1="2.435" x2="6.875" y2="2.435" width="0.2032" layer="21"/>
+<wire x1="6.875" y1="2.435" x2="6.875" y2="-4.975" width="0.2032" layer="21"/>
+<wire x1="6.875" y1="-4.975" x2="-11.955" y2="-4.975" width="0.2032" layer="21"/>
+<wire x1="-11.955" y1="-4.975" x2="-11.955" y2="2.435" width="0.2032" layer="21"/>
+<pad name="1" x="-10.16" y="-3.81" drill="0.9" diameter="1.9304"/>
+<pad name="2" x="-10.16" y="1.27" drill="0.9" diameter="1.9304"/>
+<pad name="3" x="-5.08" y="-3.81" drill="0.9" diameter="1.9304"/>
+<pad name="4" x="-5.08" y="1.27" drill="0.9" diameter="1.9304"/>
+<pad name="5" x="0" y="-3.81" drill="0.9" diameter="1.9304"/>
+<pad name="6" x="0" y="1.27" drill="0.9" diameter="1.9304"/>
+<pad name="7" x="5.08" y="-3.81" drill="0.9" diameter="1.9304"/>
+<pad name="8" x="5.08" y="1.27" drill="0.9" diameter="1.9304"/>
+<text x="-10.16" y="-1.905" size="1.27" layer="25">&gt;NAME</text>
+<text x="-1.27" y="-1.905" size="1.27" layer="27">&gt;VALUE</text>
 </package>
 </packages>
 <symbols>
@@ -852,6 +870,21 @@ Source: http://www.minicircuits.com .. HSWA2-30DR+.pdf</description>
 </gates>
 <devices>
 <device name="" package="A01">
+<connects>
+<connect gate="G$1" pin="G1" pad="3"/>
+<connect gate="G$1" pin="G2" pad="4"/>
+<connect gate="G$1" pin="G3" pad="5"/>
+<connect gate="G$1" pin="G4" pad="6"/>
+<connect gate="G$1" pin="G5" pad="7"/>
+<connect gate="G$1" pin="RFOUT" pad="2"/>
+<connect gate="G$1" pin="TUNE" pad="8"/>
+<connect gate="G$1" pin="VCC" pad="1"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+<device name="BIGPAD" package="A01BIDPAD">
 <connects>
 <connect gate="G$1" pin="G1" pad="3"/>
 <connect gate="G$1" pin="G2" pad="4"/>
