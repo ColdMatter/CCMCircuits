@@ -3763,7 +3763,7 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <part name="SUPPLY4" library="supply2" deviceset="GND" device=""/>
 <part name="SUPPLY5" library="supply2" deviceset="GND" device=""/>
 <part name="RO" library="noah" deviceset="LT030" device="" value="1.00"/>
-<part name="R6" library="noah" deviceset="RESISTOR" device="2512"/>
+<part name="R6" library="noah" deviceset="RESISTOR" device="2512" value="DNI"/>
 <part name="X13" library="con-coax" deviceset="?227161*" device="1-" technology="-0"/>
 <part name="TP8" library="Fitch" deviceset="TESTPOINT" device=""/>
 <part name="U13" library="noah" deviceset="BUF634" device=""/>
@@ -3822,7 +3822,7 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <part name="R39" library="acrooptics" deviceset="R" device="0603" value="1.000k"/>
 <part name="SUPPLY24" library="supply2" deviceset="GND" device=""/>
 <part name="RO3" library="noah" deviceset="LT030" device="" value="1.00"/>
-<part name="R40" library="noah" deviceset="RESISTOR" device="2512"/>
+<part name="R40" library="noah" deviceset="RESISTOR" device="2512" value="DNI"/>
 <part name="X9" library="con-coax" deviceset="?227161*" device="1-" technology="-0"/>
 <part name="TP6" library="Fitch" deviceset="TESTPOINT" device=""/>
 <part name="U9" library="noah" deviceset="BUF634" device=""/>
@@ -3881,7 +3881,7 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <part name="R26" library="acrooptics" deviceset="R" device="0603" value="1.000k"/>
 <part name="SUPPLY18" library="supply2" deviceset="GND" device=""/>
 <part name="RO2" library="noah" deviceset="LT030" device="" value="1.00"/>
-<part name="R27" library="noah" deviceset="RESISTOR" device="2512"/>
+<part name="R27" library="noah" deviceset="RESISTOR" device="2512" value="DNI"/>
 <part name="FRAME2" library="frames" library_urn="urn:adsk.eagle:library:229" deviceset="A4L-LOC" device=""/>
 <part name="X5" library="con-molex" deviceset="22-23-2031" device=""/>
 <part name="P-4" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="V-" device=""/>
@@ -4165,7 +4165,7 @@ With components shown 10V = 1A</text>
 </instance>
 <instance part="R6" gate="G$1" x="200.66" y="100.965" smashed="yes">
 <attribute name="NAME" x="199.39" y="97.3836" size="1.778" layer="95"/>
-<attribute name="VALUE" x="196.85" y="97.663" size="1.778" layer="96"/>
+<attribute name="VALUE" x="198.755" y="95.123" size="1.778" layer="96"/>
 </instance>
 </instances>
 <busses>
@@ -4831,7 +4831,7 @@ With components shown 10V = 1A</text>
 </instance>
 <instance part="R40" gate="G$1" x="200.66" y="100.965" smashed="yes">
 <attribute name="NAME" x="199.39" y="97.3836" size="1.778" layer="95"/>
-<attribute name="VALUE" x="196.85" y="97.663" size="1.778" layer="96"/>
+<attribute name="VALUE" x="199.39" y="95.123" size="1.778" layer="96"/>
 </instance>
 </instances>
 <busses>
@@ -5492,7 +5492,7 @@ With components shown 10V = 1A</text>
 </instance>
 <instance part="R27" gate="G$1" x="200.66" y="100.965" smashed="yes">
 <attribute name="NAME" x="199.39" y="97.3836" size="1.778" layer="95"/>
-<attribute name="VALUE" x="196.85" y="97.663" size="1.778" layer="96"/>
+<attribute name="VALUE" x="199.39" y="94.488" size="1.778" layer="96"/>
 </instance>
 </instances>
 <busses>
@@ -6029,31 +6029,6 @@ to reduce output stage power dissipation</text>
 </nets>
 </sheet>
 </sheets>
-<errors>
-<approved hash="102,1,-467.36,29.21,+5V,+3.3V,,,,"/>
-<approved hash="102,1,-415.29,22.86,+5V,+3.3V,,,,"/>
-<approved hash="102,1,-294.64,121.285,+5V,+3.3V,,,,"/>
-<approved hash="102,1,-369.57,143.51,+5V,+3.3V,,,,"/>
-<approved hash="102,1,-488.95,13.335,+5V,+3.3V,,,,"/>
-<approved hash="102,1,-285.115,77.47,+5V,+3.3V,,,,"/>
-<approved hash="102,1,-283.21,114.935,+5V,+3.3V,,,,"/>
-<approved hash="102,1,-452.755,88.265,+5V,+3.3V,,,,"/>
-<approved hash="102,1,-311.15,158.115,+5V,+3.3V,,,,"/>
-<approved hash="206,1,-464.82,31.75,+3.3V,,,,,"/>
-<approved hash="208,1,-464.82,31.75,+3.3V,out,,,,"/>
-<approved hash="208,1,-467.36,29.21,+3.3V,sup,,,,"/>
-<approved hash="208,1,-294.64,121.285,+3.3V,sup,,,,"/>
-<approved hash="208,1,-369.57,143.51,+3.3V,sup,,,,"/>
-<approved hash="208,1,-415.29,22.86,+3.3V,sup,,,,"/>
-<approved hash="208,1,-488.95,13.335,+3.3V,sup,,,,"/>
-<approved hash="208,1,-452.755,88.265,+3.3V,sup,,,,"/>
-<approved hash="208,1,-311.15,158.115,+3.3V,sup,,,,"/>
-<approved hash="208,1,-283.21,114.935,+3.3V,sup,,,,"/>
-<approved hash="208,1,-285.115,77.47,+3.3V,sup,,,,"/>
-<approved hash="106,1,-507.365,33.02,SHIELD,,,,,"/>
-<approved hash="106,1,-420.37,80.645,SPI_!SS,,,,,"/>
-<approved hash="113,1,-393.047,81.811,FRAME1,,,,,"/>
-</errors>
 </schematic>
 </drawing>
 <compatibility>
