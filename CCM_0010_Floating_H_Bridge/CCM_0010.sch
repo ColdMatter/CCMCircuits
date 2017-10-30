@@ -2405,7 +2405,7 @@ Source: &lt;a href="http://focus.ti.com/lit/ds/symlink/ua78l05.pdf"&gt; Datashee
 <part name="AGND7" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="AGND" device=""/>
 <part name="R4" library="acrooptics" deviceset="R" device="0603" value="100"/>
 <part name="D1" library="acrooptics" deviceset="LED" device="0603"/>
-<part name="R3" library="acrooptics" deviceset="R" device="0603" value="1k"/>
+<part name="R3" library="acrooptics" deviceset="R" device="0603" value="10k"/>
 <part name="AGND5" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="AGND" device=""/>
 <part name="X4" library="con-molex" library_urn="urn:adsk.eagle:library:165" deviceset="22-23-2021" device=""/>
 <part name="X5" library="con-molex" library_urn="urn:adsk.eagle:library:165" deviceset="22-23-2021" device=""/>
