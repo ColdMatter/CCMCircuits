@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="6.5.0">
+<eagle version="8.3.1">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
+<setting keepoldvectorfont="yes"/>
 <setting verticaltext="up"/>
 </settings>
 <grid distance="0.025" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
@@ -5730,7 +5731,7 @@ Basic SMA packaged diode. Good for reverse polarization protection. Common part 
 </parts>
 <sheets>
 <sheet>
-<description>P1 Module</description>
+<description>control</description>
 <plain>
 <text x="-494.03" y="135.255" size="1.778" layer="97" rot="R180"></text>
 <text x="177.165" y="189.865" size="2.54" layer="97">check switch orientations for up = on</text>
@@ -5817,7 +5818,7 @@ optional Hall sensor</text>
 <text x="285.115" y="224.79" size="1.778" layer="97">-10V</text>
 <text x="23.495" y="27.94" size="1.778" layer="97">V2</text>
 <text x="23.495" y="93.98" size="1.778" layer="97">V1</text>
-<text x="83.185" y="84.455" size="1.778" layer="97">Vout = (V2 - V1)*(1 + 2*R22/R13)*R23/R19 
+<text x="81.915" y="84.455" size="1.778" layer="97">Vout = (V2 - V1)*(1 + 2*R22/R13)*R23/R19 
 ~ (V2-V1)*10</text>
 <text x="130.81" y="69.85" size="1.778" layer="97">Vout &gt; 0 for "positive" current</text>
 <text x="174.625" y="22.225" size="1.778" layer="97">current monitor

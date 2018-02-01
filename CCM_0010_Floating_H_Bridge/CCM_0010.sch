@@ -2405,20 +2405,20 @@ Source: &lt;a href="http://focus.ti.com/lit/ds/symlink/ua78l05.pdf"&gt; Datashee
 <part name="AGND7" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="AGND" device=""/>
 <part name="R4" library="acrooptics" deviceset="R" device="0603" value="100"/>
 <part name="D1" library="acrooptics" deviceset="LED" device="0603"/>
-<part name="R3" library="acrooptics" deviceset="R" device="0603" value="10k"/>
+<part name="R3" library="acrooptics" deviceset="R" device="0603" value="51k"/>
 <part name="AGND5" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="AGND" device=""/>
 <part name="X4" library="con-molex" library_urn="urn:adsk.eagle:library:165" deviceset="22-23-2021" device=""/>
 <part name="X5" library="con-molex" library_urn="urn:adsk.eagle:library:165" deviceset="22-23-2021" device=""/>
 <part name="D4" library="acrooptics" deviceset="LED" device="0603"/>
-<part name="R9" library="acrooptics" deviceset="R" device="0603" value="10k"/>
+<part name="R9" library="acrooptics" deviceset="R" device="0603" value="51k"/>
 <part name="D5" library="acrooptics" deviceset="LED" device="0603"/>
-<part name="R10" library="acrooptics" deviceset="R" device="0603" value="10k"/>
+<part name="R10" library="acrooptics" deviceset="R" device="0603" value="51k"/>
 <part name="X6" library="con-molex" library_urn="urn:adsk.eagle:library:165" deviceset="22-23-2021" device=""/>
 <part name="D6" library="acrooptics" deviceset="LED" device="0603"/>
-<part name="R11" library="acrooptics" deviceset="R" device="0603" value="10k"/>
+<part name="R11" library="acrooptics" deviceset="R" device="0603" value="51k"/>
 <part name="X7" library="con-molex" library_urn="urn:adsk.eagle:library:165" deviceset="22-23-2021" device=""/>
 <part name="D7" library="acrooptics" deviceset="LED" device="0603"/>
-<part name="R12" library="acrooptics" deviceset="R" device="0603" value="10k"/>
+<part name="R12" library="acrooptics" deviceset="R" device="0603" value="51k"/>
 <part name="D8" library="WCSMain" deviceset="ZENER-DIODE" device="SOT23"/>
 <part name="D9" library="WCSMain" deviceset="ZENER-DIODE" device="SOT23"/>
 <part name="R13" library="acrooptics" deviceset="R" device="0603" value="100"/>
@@ -2462,7 +2462,7 @@ Source: &lt;a href="http://focus.ti.com/lit/ds/symlink/ua78l05.pdf"&gt; Datashee
 <text x="99.695" y="136.525" size="1.778" layer="97">12-18V unregulated</text>
 <text x="99.695" y="116.205" size="1.778" layer="97">high = VISO (unregulated)</text>
 <text x="99.695" y="112.395" size="1.778" layer="97">high = VDDB (regulated)</text>
-<text x="123.19" y="57.15" size="1.778" layer="97">Power off +/-7.5V to +/-15V</text>
+<text x="119.38" y="58.42" size="1.778" layer="97">Power off +/-15V</text>
 <text x="215.265" y="143.51" size="1.778" layer="97">output molex connectors:
 pin 1 is the gate
 pin 2 is the source</text>
@@ -3824,19 +3824,24 @@ there is no need for an external one. </text>
 coil</text>
 <text x="201.295" y="66.04" size="1.778" layer="97">bot 
 coil</text>
-<text x="134.62" y="104.14" size="1.778" layer="97">A full configuration using 2 of this circuit uses 9 FETs
+<text x="127" y="93.345" size="1.778" layer="97">A full configuration using 2 of this circuit uses 9 FETs
 and 2 logic signals to give 4 possibilities:
+
 (1) anti-Helmholtz direction 1
 (2) anti-Helmholtz direction 2
 (3) Helmholtz direction 1
-(4) Helmholtz direction 2</text>
+(4) Helmholtz direction 2
+
+This is the most flexible configuration and the body
+diodes do all the protection for you, no need for any
+external ones.</text>
 <circle x="203.2" y="58.42" radius="0.635" width="0.1524" layer="97"/>
 <wire x1="203.835" y1="58.42" x2="213.36" y2="58.42" width="0.1524" layer="97"/>
 <text x="213.995" y="57.785" size="1.778" layer="97">I_feedback</text>
-<wire x1="129.54" y1="124.46" x2="228.6" y2="124.46" width="0.508" layer="97"/>
+<wire x1="124.46" y1="124.46" x2="228.6" y2="124.46" width="0.508" layer="97"/>
 <wire x1="228.6" y1="124.46" x2="228.6" y2="43.18" width="0.508" layer="97"/>
-<wire x1="228.6" y1="43.18" x2="129.54" y2="43.18" width="0.508" layer="97"/>
-<wire x1="129.54" y1="43.18" x2="129.54" y2="124.46" width="0.508" layer="97"/>
+<wire x1="228.6" y1="43.18" x2="124.46" y2="43.18" width="0.508" layer="97"/>
+<wire x1="124.46" y1="43.18" x2="124.46" y2="124.46" width="0.508" layer="97"/>
 <wire x1="196.85" y1="71.12" x2="196.85" y2="74.93" width="0.1524" layer="97"/>
 <wire x1="195.58" y1="74.93" x2="198.12" y2="74.93" width="0.1524" layer="97"/>
 <wire x1="198.12" y1="74.93" x2="196.85" y2="76.835" width="0.1524" layer="97"/>
