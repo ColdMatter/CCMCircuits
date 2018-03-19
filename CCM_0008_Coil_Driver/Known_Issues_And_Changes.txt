@@ -1,0 +1,11 @@
+Changes for Sid's experiment (all configured for unipolar):
+
+1) swapped control signal differential inputs to give positive current for positive control voltage
+
+2) removed input parallel RC on both control-signal inputs, replaced R31 with 0 ohms to local-ground reference the control signal (otherwise was floating beyond common-mode limits of input op-amps).
+
+3) R5 -> 0 ohms seemed to improve tunability of feedback
+
+4) current sensor is "inverted", JP4 is installed
+
+5) current monitor circuit is just wrong but even after making it a buffer the output signal is inverted
