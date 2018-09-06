@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="8.3.1">
+<eagle version="9.0.1">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
 <setting keepoldvectorfont="yes"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.025" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
+<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
 <layer number="2" name="Route2" color="1" fill="3" visible="no" active="no"/>
@@ -3926,7 +3926,7 @@ Vout = Vin*(1+2*R36/R28) - Vfeedback
 (2) Rsense choice (Rs): higher resistance = lower I/V
 (3) Feedback gain (Gf): higher gain = lower V:A ratio
 A/V = Gi / (Rs * Gf)
-Ginst limited by Vsupply to be ~1 for full input range -10..10V
+Gi limited by Vsupply to be ~1 for full input range -10..10V
 With components shown 10V = 1A</text>
 </plain>
 <instances>

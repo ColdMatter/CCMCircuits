@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="8.6.0">
+<eagle version="9.0.1">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
 <setting keepoldvectorfont="yes"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.025" unitdist="inch" unit="inch" style="lines" multiple="4" display="yes" altdistance="0.01" altunitdist="inch" altunit="inch"/>
+<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
 <layer number="2" name="Route2" color="1" fill="3" visible="no" active="no"/>
@@ -956,34 +956,6 @@ male, 94 pins, type B, rows AB, grid 2.54 mm</description>
 </deviceset>
 </devicesets>
 </library>
-<library name="SparkFun">
-<description>Spark Fun Electronics' preferred foot prints. &lt;b&gt;Not to be used for commercial purposes.&lt;/b&gt; We've spent an enormous amount of time creating and checking these footprints and parts. If you enjoy using this library, please buy one of our products at www.sparkfun.com.</description>
-<packages>
-</packages>
-<symbols>
-<symbol name="3.3V">
-<wire x1="0.762" y1="1.27" x2="0" y2="2.54" width="0.254" layer="94"/>
-<wire x1="0" y1="2.54" x2="-0.762" y2="1.27" width="0.254" layer="94"/>
-<text x="-1.016" y="3.556" size="1.778" layer="96">&gt;VALUE</text>
-<pin name="3.3V" x="0" y="0" visible="off" length="short" direction="sup" rot="R90"/>
-</symbol>
-</symbols>
-<devicesets>
-<deviceset name="3.3V" prefix="P+">
-<description>&lt;b&gt;SUPPLY SYMBOL&lt;/b&gt;</description>
-<gates>
-<gate name="G$1" symbol="3.3V" x="0" y="0"/>
-</gates>
-<devices>
-<device name="">
-<technologies>
-<technology name=""/>
-</technologies>
-</device>
-</devices>
-</deviceset>
-</devicesets>
-</library>
 <library name="diode" urn="urn:adsk.eagle:library:210">
 <description>&lt;b&gt;Diodes&lt;/b&gt;&lt;p&gt;
 Based on the following sources:
@@ -1105,10 +1077,6 @@ Source: Fairchild .. BAT54.pdf</description>
 <part name="C75" library="acrooptics" deviceset="C" device="0603" value="4.7u"/>
 <part name="P-28" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="-5V" device=""/>
 <part name="P+56" library="acrooptics" deviceset="+5V" device=""/>
-<part name="C76" library="acrooptics" deviceset="C" device="0603" value="0.1u"/>
-<part name="C78" library="acrooptics" deviceset="C" device="0603" value="4.7u"/>
-<part name="P+61" library="SparkFun" deviceset="3.3V" device=""/>
-<part name="SUPPLY29" library="acrooptics" deviceset="GND" device=""/>
 <part name="D9" library="diode" library_urn="urn:adsk.eagle:library:210" deviceset="BAT54S" device="" package3d_urn="urn:adsk.eagle:package:43389/2"/>
 <part name="AGND17" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="AGND" device=""/>
 <part name="SUPPLY30" library="supply2" deviceset="GND" device=""/>
@@ -1217,20 +1185,6 @@ When starting a new subrack board, start with this sheet</text>
 </instance>
 <instance part="P+56" gate="1" x="40.64" y="43.18" smashed="yes">
 <attribute name="VALUE" x="38.735" y="43.815" size="1.778" layer="96"/>
-</instance>
-<instance part="C76" gate="G$1" x="68.58" y="33.655" smashed="yes">
-<attribute name="NAME" x="69.469" y="34.671" size="1.778" layer="95"/>
-<attribute name="VALUE" x="69.469" y="29.591" size="1.778" layer="96"/>
-</instance>
-<instance part="C78" gate="G$1" x="60.96" y="33.655" smashed="yes">
-<attribute name="NAME" x="61.849" y="34.671" size="1.778" layer="95"/>
-<attribute name="VALUE" x="61.849" y="29.591" size="1.778" layer="96"/>
-</instance>
-<instance part="P+61" gate="G$1" x="60.96" y="40.64" smashed="yes">
-<attribute name="VALUE" x="58.674" y="43.561" size="1.778" layer="96"/>
-</instance>
-<instance part="SUPPLY29" gate="GND" x="60.96" y="22.86" smashed="yes">
-<attribute name="VALUE" x="59.69" y="19.05" size="1.778" layer="96"/>
 </instance>
 <instance part="D9" gate="G$1" x="113.03" y="27.94" rot="MR180"/>
 <instance part="AGND17" gate="VR1" x="113.03" y="20.32" smashed="yes">
@@ -1660,18 +1614,6 @@ When starting a new subrack board, start with this sheet</text>
 <pinref part="X15" gate="A" pin="25"/>
 </segment>
 </net>
-<net name="3.3V" class="0">
-<segment>
-<pinref part="C78" gate="G$1" pin="1"/>
-<wire x1="60.96" y1="36.195" x2="60.96" y2="38.1" width="0.1524" layer="91"/>
-<pinref part="C76" gate="G$1" pin="1"/>
-<wire x1="60.96" y1="38.1" x2="68.58" y2="38.1" width="0.1524" layer="91"/>
-<wire x1="68.58" y1="38.1" x2="68.58" y2="36.195" width="0.1524" layer="91"/>
-<pinref part="P+61" gate="G$1" pin="3.3V"/>
-<wire x1="60.96" y1="38.1" x2="60.96" y2="40.64" width="0.1524" layer="91"/>
-<junction x="60.96" y="38.1"/>
-</segment>
-</net>
 <net name="AN0" class="0">
 <segment>
 <wire x1="147.32" y1="58.42" x2="137.16" y2="58.42" width="0.1524" layer="91"/>
@@ -1715,16 +1657,6 @@ When starting a new subrack board, start with this sheet</text>
 </segment>
 </net>
 <net name="GND" class="0">
-<segment>
-<pinref part="C76" gate="G$1" pin="2"/>
-<wire x1="68.58" y1="27.94" x2="68.58" y2="29.845" width="0.1524" layer="91"/>
-<wire x1="68.58" y1="27.94" x2="60.96" y2="27.94" width="0.1524" layer="91"/>
-<pinref part="C78" gate="G$1" pin="2"/>
-<wire x1="60.96" y1="27.94" x2="60.96" y2="29.845" width="0.1524" layer="91"/>
-<pinref part="SUPPLY29" gate="GND" pin="GND"/>
-<wire x1="60.96" y1="27.94" x2="60.96" y2="25.4" width="0.1524" layer="91"/>
-<junction x="60.96" y="27.94"/>
-</segment>
 <segment>
 <pinref part="D9" gate="G$1" pin="A1"/>
 <wire x1="107.95" y1="27.94" x2="105.41" y2="27.94" width="0.1524" layer="91"/>

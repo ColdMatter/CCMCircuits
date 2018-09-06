@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="8.6.0">
+<eagle version="9.0.1">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.025" unitdist="inch" unit="inch" style="lines" multiple="4" display="yes" altdistance="0.01" altunitdist="inch" altunit="inch"/>
+<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
 <layer number="2" name="Route2" color="1" fill="3" visible="no" active="no"/>
@@ -2107,7 +2107,9 @@ individual boards should use separate planes
 connected together with anti-parallel Schottky diodes
 
 ANX and GPIOX are project-dependent, beware 
-conflicts if multiple projects share a single subrack</text>
+conflicts if multiple projects share a single subrack
+
+Mains sync/indicator are generated on the DPWR module.</text>
 </plain>
 <instances>
 <instance part="AGND10" gate="VR1" x="146.05" y="53.34" smashed="yes" rot="R270">
@@ -2314,13 +2316,6 @@ conflicts if multiple projects share a single subrack</text>
 <pinref part="X1" gate="G$1" pin="A14"/>
 </segment>
 </net>
-<net name="GPIO14" class="0">
-<segment>
-<wire x1="149.86" y1="96.52" x2="139.7" y2="96.52" width="0.1524" layer="91"/>
-<label x="139.7" y="96.52" size="1.27" layer="95" rot="R180" xref="yes"/>
-<pinref part="X1" gate="G$1" pin="A15"/>
-</segment>
-</net>
 <net name="I2C_DAT" class="0">
 <segment>
 <wire x1="149.86" y1="76.2" x2="139.7" y2="76.2" width="0.1524" layer="91"/>
@@ -2469,13 +2464,6 @@ conflicts if multiple projects share a single subrack</text>
 <pinref part="X1" gate="G$1" pin="B14"/>
 </segment>
 </net>
-<net name="GPIO15" class="0">
-<segment>
-<wire x1="165.1" y1="96.52" x2="175.26" y2="96.52" width="0.1524" layer="91"/>
-<label x="175.26" y="96.52" size="1.27" layer="95" rot="MR180" xref="yes"/>
-<pinref part="X1" gate="G$1" pin="B15"/>
-</segment>
-</net>
 <net name="AN1" class="0">
 <segment>
 <wire x1="165.1" y1="60.96" x2="175.26" y2="60.96" width="0.1524" layer="91"/>
@@ -2604,6 +2592,20 @@ conflicts if multiple projects share a single subrack</text>
 <pinref part="X1" gate="G$1" pin="B5"/>
 <wire x1="165.1" y1="121.92" x2="175.26" y2="121.92" width="0.1524" layer="91"/>
 <label x="175.26" y="121.92" size="1.27" layer="95" xref="yes"/>
+</segment>
+</net>
+<net name="MAINS_SYNC" class="0">
+<segment>
+<wire x1="165.1" y1="96.52" x2="175.26" y2="96.52" width="0.1524" layer="91"/>
+<label x="175.26" y="96.52" size="1.27" layer="95" rot="MR180" xref="yes"/>
+<pinref part="X1" gate="G$1" pin="B15"/>
+</segment>
+</net>
+<net name="MAINS_INDICATOR" class="0">
+<segment>
+<wire x1="149.86" y1="96.52" x2="139.7" y2="96.52" width="0.1524" layer="91"/>
+<label x="139.7" y="96.52" size="1.27" layer="95" rot="R180" xref="yes"/>
+<pinref part="X1" gate="G$1" pin="A15"/>
 </segment>
 </net>
 </nets>
