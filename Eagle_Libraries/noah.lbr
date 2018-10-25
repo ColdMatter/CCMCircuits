@@ -7,7 +7,7 @@
 <setting keepoldvectorfont="yes"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="50" unitdist="mil" unit="mil" style="lines" multiple="1" display="yes" altdistance="5" altunitdist="mil" altunit="mil"/>
+<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="yes" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="yes" active="yes"/>
 <layer number="2" name="Route2" color="1" fill="3" visible="yes" active="yes"/>
@@ -68,6 +68,8 @@
 <layer number="58" name="bCAD" color="7" fill="1" visible="no" active="no"/>
 <layer number="59" name="tCarbon" color="7" fill="1" visible="no" active="no"/>
 <layer number="60" name="bCarbon" color="7" fill="1" visible="no" active="no"/>
+<layer number="88" name="SimResults" color="9" fill="1" visible="yes" active="yes"/>
+<layer number="89" name="SimProbes" color="9" fill="1" visible="yes" active="yes"/>
 <layer number="90" name="Modules" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="91" name="Nets" color="2" fill="1" visible="yes" active="yes"/>
 <layer number="92" name="Busses" color="1" fill="1" visible="yes" active="yes"/>
@@ -2307,11 +2309,11 @@ male, 32 pins, type B, rows A, grid 2.54 mm</description>
 <pad name="P$6" x="12.7" y="0" drill="1.1"/>
 </package>
 <package name="TESTPOINT">
-<smd name="P$1" x="0" y="0" dx="3.81" dy="2.032" layer="1"/>
 <wire x1="-2.159" y1="1.27" x2="2.159" y2="1.27" width="0.127" layer="21"/>
 <wire x1="2.159" y1="1.27" x2="2.159" y2="-1.27" width="0.127" layer="21"/>
 <wire x1="2.159" y1="-1.27" x2="-2.159" y2="-1.27" width="0.127" layer="21"/>
 <wire x1="-2.159" y1="-1.27" x2="-2.159" y2="1.27" width="0.127" layer="21"/>
+<smd name="P$1" x="0" y="0" dx="3.81" dy="2.032" layer="1"/>
 <text x="-2.159" y="2.159" size="0.508" layer="21" font="vector">&gt;Name</text>
 </package>
 <package name="0603">
@@ -2701,7 +2703,7 @@ Source: http://www.analog.com/UploadedFiles/Data_Sheets/703465986AD8611_2_0.pdf<
 <text x="1.5748" y="-2.5908" size="1.27" layer="27" rot="R90">&gt;VALUE</text>
 </package>
 <package name="22-23-2041">
-<description>.100" (2.54mm) Center Header - 4 Pin</description>
+<description>&lt;b&gt;KK® 254 Solid Header, Vertical, with Friction Lock, 4 Circuits, Tin (Sn) Plating&lt;/b&gt;&lt;p&gt;&lt;a href =http://www.molex.com/pdm_docs/sd/022232041_sd.pdf&gt;Datasheet &lt;/a&gt;</description>
 <wire x1="-5.08" y1="3.175" x2="5.08" y2="3.175" width="0.254" layer="21"/>
 <wire x1="5.08" y1="3.175" x2="5.08" y2="1.27" width="0.254" layer="21"/>
 <wire x1="5.08" y1="1.27" x2="5.08" y2="-3.175" width="0.254" layer="21"/>
@@ -5995,6 +5997,50 @@ Source: http://focus.ti.com/lit/ds/symlink/ua78l05.pdf</description>
 <text x="2.794" y="-2.4638" size="1.778" layer="96">&gt;VALUE</text>
 <pin name="MOUNT" x="-2.54" y="0" visible="off" length="short" direction="pas"/>
 </symbol>
+<symbol name="HIP4082">
+<wire x1="0" y1="40.64" x2="20.32" y2="40.64" width="0.254" layer="94"/>
+<wire x1="20.32" y1="40.64" x2="20.32" y2="0" width="0.254" layer="94"/>
+<wire x1="20.32" y1="0" x2="0" y2="0" width="0.254" layer="94"/>
+<wire x1="0" y1="0" x2="0" y2="40.64" width="0.254" layer="94"/>
+<text x="-5.08" y="46.99" size="1.778" layer="95">&gt;NAME</text>
+<text x="-5.08" y="43.18" size="1.778" layer="96">&gt;VALUE</text>
+<pin name="AHI" x="-2.54" y="15.24" length="short" direction="in"/>
+<pin name="DIS" x="-2.54" y="5.08" length="short" direction="in"/>
+<pin name="VDD" x="10.16" y="43.18" length="short" direction="pwr" rot="R270"/>
+<pin name="DEL" x="-2.54" y="10.16" length="short" direction="in"/>
+<pin name="BHB" x="-2.54" y="35.56" length="short" direction="in"/>
+<pin name="VSS" x="10.16" y="-2.54" length="short" direction="pwr" rot="R90"/>
+<pin name="AHB" x="22.86" y="5.08" length="short" direction="out" rot="R180"/>
+<pin name="AHO" x="22.86" y="10.16" length="short" direction="in" rot="R180"/>
+<pin name="AHS" x="22.86" y="15.24" length="short" direction="out" rot="R180"/>
+<pin name="BLO" x="22.86" y="25.4" length="short" direction="out" rot="R180"/>
+<pin name="BHO" x="22.86" y="35.56" length="short" direction="out" rot="R180"/>
+<pin name="BHI" x="-2.54" y="30.48" length="short" direction="in"/>
+<pin name="BLI" x="-2.54" y="25.4" length="short" direction="in"/>
+<pin name="ALI" x="-2.54" y="20.32" length="short" direction="in"/>
+<pin name="ALO" x="22.86" y="20.32" length="short" direction="pas" rot="R180"/>
+<pin name="BHS" x="22.86" y="30.48" length="short" direction="in" rot="R180"/>
+</symbol>
+<symbol name="TESTPOINT">
+<wire x1="0" y1="-1.27" x2="0" y2="1.27" width="0.254" layer="94"/>
+<wire x1="0" y1="1.27" x2="2.54" y2="1.27" width="0.254" layer="94"/>
+<wire x1="2.54" y1="1.27" x2="2.54" y2="-1.27" width="0.254" layer="94"/>
+<wire x1="2.54" y1="-1.27" x2="0" y2="-1.27" width="0.254" layer="94"/>
+<pin name="P$1" x="-5.08" y="0" visible="off" length="middle"/>
+<text x="-5.08" y="2.54" size="1.778" layer="95">&gt;Name</text>
+</symbol>
+<symbol name="CASR15">
+<wire x1="0" y1="12.7" x2="10.16" y2="12.7" width="0.254" layer="94"/>
+<wire x1="10.16" y1="12.7" x2="10.16" y2="-10.16" width="0.254" layer="94"/>
+<wire x1="10.16" y1="-10.16" x2="0" y2="-10.16" width="0.254" layer="94"/>
+<wire x1="0" y1="-10.16" x2="0" y2="12.7" width="0.254" layer="94"/>
+<pin name="VCC" x="5.08" y="15.24" length="short" rot="R270"/>
+<pin name="GND" x="5.08" y="-12.7" length="short" rot="R90"/>
+<pin name="OUT" x="12.7" y="2.54" length="short" rot="R180"/>
+<pin name="REF" x="12.7" y="0" length="short" rot="R180"/>
+<text x="-10.16" y="10.16" size="1.778" layer="95">&gt;NAME</text>
+<text x="-10.16" y="7.62" size="1.778" layer="96">&gt;VALUE</text>
+</symbol>
 </symbols>
 <devicesets>
 <deviceset name="PIC18F46K80">
@@ -9065,6 +9111,69 @@ male, 94 pins, type B, rows AB, grid 2.54 mm</description>
 <device name="" package="4.2-PAD-SMALL">
 <connects>
 <connect gate="G$1" pin="MOUNT" pad="B4,2"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+</devices>
+</deviceset>
+<deviceset name="HIP4082" prefix="IC">
+<gates>
+<gate name="G$1" symbol="HIP4082" x="-10.16" y="-20.32"/>
+</gates>
+<devices>
+<device name="" package="SO16">
+<connects>
+<connect gate="G$1" pin="AHB" pad="9"/>
+<connect gate="G$1" pin="AHI" pad="7"/>
+<connect gate="G$1" pin="AHO" pad="10"/>
+<connect gate="G$1" pin="AHS" pad="11"/>
+<connect gate="G$1" pin="ALI" pad="4"/>
+<connect gate="G$1" pin="ALO" pad="13"/>
+<connect gate="G$1" pin="BHB" pad="1"/>
+<connect gate="G$1" pin="BHI" pad="2"/>
+<connect gate="G$1" pin="BHO" pad="16"/>
+<connect gate="G$1" pin="BHS" pad="15"/>
+<connect gate="G$1" pin="BLI" pad="3"/>
+<connect gate="G$1" pin="BLO" pad="14"/>
+<connect gate="G$1" pin="DEL" pad="5"/>
+<connect gate="G$1" pin="DIS" pad="8"/>
+<connect gate="G$1" pin="VDD" pad="12"/>
+<connect gate="G$1" pin="VSS" pad="6"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+</devices>
+</deviceset>
+<deviceset name="TESTPOINT" prefix="TP">
+<gates>
+<gate name="G$1" symbol="TESTPOINT" x="5.08" y="0"/>
+</gates>
+<devices>
+<device name="" package="TESTPOINT">
+<connects>
+<connect gate="G$1" pin="P$1" pad="P$1"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+</devices>
+</deviceset>
+<deviceset name="CASR15" prefix="CS">
+<gates>
+<gate name="G$1" symbol="CASR15" x="0" y="0"/>
+</gates>
+<devices>
+<device name="X" package="22-23-2041">
+<connects>
+<connect gate="G$1" pin="GND" pad="2"/>
+<connect gate="G$1" pin="OUT" pad="3"/>
+<connect gate="G$1" pin="REF" pad="4"/>
+<connect gate="G$1" pin="VCC" pad="1"/>
 </connects>
 <technologies>
 <technology name=""/>
