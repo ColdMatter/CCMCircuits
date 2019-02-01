@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="8.3.0">
+<eagle version="9.0.1">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
 <setting keepoldvectorfont="yes"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.025" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
+<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
 <layer number="2" name="Route2" color="1" fill="3" visible="no" active="no"/>
@@ -3006,7 +3006,7 @@ grid 2.54 mm</description>
 <rectangle x1="-2.4892" y1="-1.3208" x2="-1.6393" y2="1.3292" layer="51"/>
 <rectangle x1="1.651" y1="-1.3208" x2="2.5009" y2="1.3292" layer="51"/>
 </package>
-<package name="SO8" urn="urn:adsk.eagle:footprint:3715/1+">
+<package name="SO8" urn="urn:adsk.eagle:footprint:3715/1" locally_modified="yes">
 <description>&lt;b&gt;8-Lead Small Outline IC&lt;/b&gt; (SO-8)&lt;p&gt;
 Source: http://www.analog.com/UploadedFiles/Data_Sheets/703465986AD8611_2_0.pdf</description>
 <wire x1="2.4" y1="1.9" x2="2.4" y2="-1.4" width="0.2032" layer="21"/>
@@ -3110,7 +3110,7 @@ msot008b.pdf</description>
 <text x="-4.445" y="0.5318" size="1.27" layer="25" ratio="10">&gt;NAME</text>
 <text x="-4.191" y="-7.0882" size="1.27" layer="27" ratio="10">&gt;VALUE</text>
 </package>
-<package name="DIL08" urn="urn:adsk.eagle:footprint:3717/1+">
+<package name="DIL08" urn="urn:adsk.eagle:footprint:3717/1" locally_modified="yes">
 <description>&lt;b&gt;Dual In Line Package&lt;/b&gt;</description>
 <wire x1="5.08" y1="2.921" x2="-5.08" y2="2.921" width="0.1524" layer="21"/>
 <wire x1="-5.08" y1="-2.921" x2="5.08" y2="-2.921" width="0.1524" layer="21"/>
@@ -3758,12 +3758,12 @@ Source: http://www.analog.com/static/imported-files/data_sheets/AD8541_8542_8544
 <part name="X6" library="con-molex" library_urn="urn:adsk.eagle:library:165" deviceset="22-23-2031" device=""/>
 <part name="Q1" library="transistor-power" library_urn="urn:adsk.eagle:library:400" deviceset="TIP41C" device="" package3d_urn="urn:adsk.eagle:package:29487/1" value="TIP29"/>
 <part name="Q2" library="transistor-power" library_urn="urn:adsk.eagle:library:400" deviceset="TIP42C" device="" package3d_urn="urn:adsk.eagle:package:29487/1" value="TIP30"/>
-<part name="R1" library="acrooptics" deviceset="R" device="0603" value="10.00k"/>
+<part name="R1" library="acrooptics" deviceset="R" device="0603" value="9.000k"/>
 <part name="R5" library="acrooptics" deviceset="R" device="0603" value="1.000k"/>
 <part name="SUPPLY4" library="supply2" deviceset="GND" device=""/>
 <part name="SUPPLY5" library="supply2" deviceset="GND" device=""/>
-<part name="RO" library="noah" deviceset="LT030" device="" value="1.00"/>
-<part name="R6" library="noah" deviceset="RESISTOR" device="2512" value="DNI"/>
+<part name="RS1" library="noah" deviceset="LT030" device="" value="1.00"/>
+<part name="RS2" library="noah" deviceset="RESISTOR" device="2512" value="DNI"/>
 <part name="X13" library="con-coax" deviceset="?227161*" device="1-" technology="-0"/>
 <part name="TP8" library="Fitch" deviceset="TESTPOINT" device=""/>
 <part name="U13" library="noah" deviceset="BUF634" device=""/>
@@ -3907,27 +3907,26 @@ TIP29/TIP30 123 = BCE</text>
 <text x="89.535" y="83.185" size="1.778" layer="97">40k laser-trimmed resistors</text>
 <text x="15.24" y="85.725" size="1.778" layer="97">Vcontrol(+)</text>
 <text x="15.875" y="123.825" size="1.778" layer="97">Vcontrol(-)</text>
-<text x="198.12" y="123.19" size="1.778" layer="97">various Rsense packages
-Iout = G1*Vin / (G2*Rsense)
-G1 = instr. amp. gain
-G2 = feedback buffer gain
+<text x="198.12" y="123.19" size="1.778" layer="97">various Rs packages
 low thermal drift is good
 e.g. 1% LTO 30 series (Vishay)
-recommend ext. heat sink if P &gt; 1W
+recommend ext. heat sink if P &gt; 0.5W
 separate from push/pull stage</text>
 <text x="55.88" y="132.08" size="1.778" layer="97">** Vin == Vcontrol(+) - Vcontrol(-)
 Vout = Vin*(1+2*R36/R28) - Vfeedback
  = Vin - Vfeedback if R28 omitted</text>
 <text x="118.745" y="106.045" size="1.778" layer="97">**</text>
-<text x="67.31" y="74.295" size="1.778" layer="97">G1 == (1 + 2*R36/R28)
+<text x="67.31" y="74.295" size="1.778" layer="97">Gi == (1 + 2*R36/R28)
  = 1 if R28 omitted</text>
-<text x="124.46" y="58.42" size="1.778" layer="97">Vfeedback = G2*Iout/Rsense</text>
-<text x="196.215" y="109.855" size="1.778" layer="97">Rsense</text>
-<text x="176.53" y="55.245" size="1.778" layer="97">G2 = 1 + R1/R5</text>
-<text x="71.12" y="151.13" size="2.54" layer="97">Vin:Iout ratio can be adjusted by 
-(1) instrumentation amplifier gain -- higher gain = higher ratio
-(2) Rsense choice -- higher resistance = lower ratio
-(3) Feedback gain -- higher gain = lower ratio
+<text x="124.46" y="58.42" size="1.778" layer="97">Vfeedback = Gf*Iout/Rs</text>
+<text x="199.39" y="112.395" size="1.778" layer="97">Rs</text>
+<text x="176.53" y="55.245" size="1.778" layer="97">Gf = 1 + R1/R5</text>
+<text x="53.34" y="146.05" size="2.1844" layer="97">Vin:Iout ratio can be adjusted by 
+(1) instr. amplifier gain (Gi): higher gain = higher I/V
+(2) Rsense choice (Rs): higher resistance = lower I/V
+(3) Feedback gain (Gf): higher gain = lower V:A ratio
+A/V = Gi / (Rs * Gf)
+Gi limited by Vsupply to be ~1 for full input range -10..10V
 With components shown 10V = 1A</text>
 </plain>
 <instances>
@@ -4159,13 +4158,12 @@ With components shown 10V = 1A</text>
 <instance part="SUPPLY5" gate="GND" x="174.625" y="29.845" smashed="yes" rot="MR0">
 <attribute name="VALUE" x="171.45" y="27.94" size="1.778" layer="96" rot="MR180"/>
 </instance>
-<instance part="RO" gate="G$1" x="200.66" y="106.045" smashed="yes">
+<instance part="RS1" gate="G$1" x="200.66" y="106.045" smashed="yes">
 <attribute name="NAME" x="198.755" y="107.5436" size="1.778" layer="95"/>
 <attribute name="VALUE" x="198.12" y="102.743" size="1.778" layer="96"/>
 </instance>
-<instance part="R6" gate="G$1" x="200.66" y="100.965" smashed="yes">
+<instance part="RS2" gate="G$1" x="200.66" y="100.965" smashed="yes">
 <attribute name="NAME" x="199.39" y="97.3836" size="1.778" layer="95"/>
-<attribute name="VALUE" x="198.755" y="95.123" size="1.778" layer="96"/>
 </instance>
 </instances>
 <busses>
@@ -4456,8 +4454,8 @@ With components shown 10V = 1A</text>
 <pinref part="X2" gate="-1" pin="S"/>
 <wire x1="227.965" y1="106.045" x2="215.265" y2="106.045" width="0.1524" layer="91"/>
 <pinref part="U4" gate="P" pin="IN+"/>
-<pinref part="RO" gate="G$1" pin="2"/>
-<pinref part="R6" gate="G$1" pin="2"/>
+<pinref part="RS1" gate="G$1" pin="2"/>
+<pinref part="RS2" gate="G$1" pin="2"/>
 <wire x1="205.74" y1="100.965" x2="208.915" y2="100.965" width="0.1524" layer="91"/>
 <junction x="208.915" y="100.965"/>
 </segment>
@@ -4522,8 +4520,8 @@ With components shown 10V = 1A</text>
 <wire x1="186.055" y1="111.125" x2="186.055" y2="106.045" width="0.1524" layer="91"/>
 <junction x="186.055" y="106.045"/>
 <wire x1="186.055" y1="94.615" x2="186.055" y2="106.045" width="0.1524" layer="91"/>
-<pinref part="RO" gate="G$1" pin="1"/>
-<pinref part="R6" gate="G$1" pin="1"/>
+<pinref part="RS1" gate="G$1" pin="1"/>
+<pinref part="RS2" gate="G$1" pin="1"/>
 <wire x1="195.58" y1="100.965" x2="193.675" y2="100.965" width="0.1524" layer="91"/>
 <wire x1="193.675" y1="100.965" x2="193.675" y2="106.045" width="0.1524" layer="91"/>
 </segment>
