@@ -1,0 +1,8 @@
+The pin 1 side of the jtagice is the gray wire.
+Programming do not tick the clock div 8 fuse.
+With ribbon near, usb far, the right led should be green,
+the middle red, left off except when writing to microcontroller.
+
+Interface setting 16.1kHz seems fine.
+Sutck cel is 8MHz 6CK 14CK 64MS Default.
+Lock bits no lock.
