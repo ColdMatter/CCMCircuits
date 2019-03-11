@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="9.0.1">
+<eagle version="9.2.1">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
@@ -3354,7 +3354,7 @@ Source: www.kingbright.com</description>
 </classes>
 <parts>
 <part name="FRAME1" library="frames" library_urn="urn:adsk.eagle:library:229" deviceset="A4L-LOC" device=""/>
-<part name="D4" library="diode" library_urn="urn:adsk.eagle:library:210" deviceset="ZENER-DIODE" device="SOT23" package3d_urn="urn:adsk.eagle:package:43389@1/2" value="BZX84B15"/>
+<part name="D4" library="diode" library_urn="urn:adsk.eagle:library:210" deviceset="ZENER-DIODE" device="SOT23" package3d_urn="urn:adsk.eagle:package:43389@1/2" value="BZX84B18"/>
 <part name="R1" library="noah" deviceset="RESISTOR" device="0603" value="100"/>
 <part name="R4" library="noah" deviceset="RESISTOR" device="0603" value="50k"/>
 <part name="X1" library="con-molex" library_urn="urn:adsk.eagle:library:165" deviceset="22-23-2021" device=""/>
@@ -3368,7 +3368,11 @@ Source: www.kingbright.com</description>
 <text x="-494.03" y="135.255" size="1.778" layer="97" rot="R180"></text>
 </plain>
 <instances>
-<instance part="FRAME1" gate="G$1" x="0" y="0"/>
+<instance part="FRAME1" gate="G$1" x="0" y="0" smashed="yes">
+<attribute name="DRAWING_NAME" x="217.17" y="15.24" size="2.54" layer="94"/>
+<attribute name="LAST_DATE_TIME" x="217.17" y="10.16" size="2.286" layer="94"/>
+<attribute name="SHEET" x="230.505" y="5.08" size="2.54" layer="94"/>
+</instance>
 <instance part="D4" gate="G$1" x="73.66" y="40.64" smashed="yes" rot="R90">
 <attribute name="NAME" x="75.692" y="41.275" size="1.778" layer="95"/>
 <attribute name="VALUE" x="75.692" y="39.116" size="1.778" layer="96"/>
