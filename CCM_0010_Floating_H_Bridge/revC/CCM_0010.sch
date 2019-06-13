@@ -7,7 +7,7 @@
 <setting keepoldvectorfont="yes"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.025" unitdist="inch" unit="inch" style="lines" multiple="4" display="yes" altdistance="0.01" altunitdist="inch" altunit="inch"/>
+<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
 <layer number="2" name="Route2" color="1" fill="3" visible="no" active="no"/>
@@ -4873,7 +4873,7 @@ http://www.zetex.com&lt;p&gt;
 <part name="R27" library="acrooptics" deviceset="R" device="0603" value="DNI"/>
 <part name="C33" library="acrooptics" deviceset="C" device="0603" value="DNI"/>
 <part name="AGND12" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="AGND" device=""/>
-<part name="IC10" library="linear" library_urn="urn:adsk.eagle:library:262" deviceset="OP07*" device="R" package3d_urn="urn:adsk.eagle:package:16404/2" technology="C" value="LT1097"/>
+<part name="IC10" library="linear" library_urn="urn:adsk.eagle:library:262" deviceset="OP07*" device="R" package3d_urn="urn:adsk.eagle:package:16404/2" technology="C" value="AD820"/>
 <part name="C32" library="acrooptics" deviceset="C" device="0603" value="DNI"/>
 <part name="IC9" library="linear" library_urn="urn:adsk.eagle:library:262" deviceset="OP07*" device="R" package3d_urn="urn:adsk.eagle:package:16404/2" technology="C" value="LT1097"/>
 <part name="R6" library="acrooptics" deviceset="R" device="0603" value="10k"/>

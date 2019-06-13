@@ -7,7 +7,7 @@
 <setting keepoldvectorfont="yes"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.025" unitdist="inch" unit="inch" style="lines" multiple="4" display="yes" altdistance="0.01" altunitdist="inch" altunit="inch"/>
+<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
 <layer number="2" name="Route2" color="1" fill="3" visible="no" active="no"/>
@@ -6427,9 +6427,9 @@ www.lem.com</description>
 <part name="SUPPLY8" library="supply2" deviceset="GND" device=""/>
 <part name="D1" library="AquariumLibrary" deviceset="DIODE-" device="SOD123" value="BAV19W"/>
 <part name="R10" library="acrooptics" deviceset="R" device="0603" value="1k"/>
-<part name="C24" library="acrooptics" deviceset="C" device="0603" value="20p"/>
-<part name="C20" library="acrooptics" deviceset="C" device="0603" value="1n"/>
-<part name="R8" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-TRIMM" device="3296W" package3d_urn="urn:adsk.eagle:package:23739/1" value="200k"/>
+<part name="C24" library="acrooptics" deviceset="C" device="0603" value="100p"/>
+<part name="C20" library="acrooptics" deviceset="C" device="0603" value="10n"/>
+<part name="R8" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-TRIMM" device="3296W" package3d_urn="urn:adsk.eagle:package:23739/1" value="100k"/>
 <part name="SUPPLY7" library="supply2" deviceset="GND" device=""/>
 <part name="P+5" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="V+" device=""/>
 <part name="P-5" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="V-" device=""/>
@@ -6506,8 +6506,7 @@ source</text>
 <text x="224.79" y="32.385" size="1.778" layer="97">optional connections for 
 Rsense or a Hall probe etc.</text>
 <text x="17.78" y="60.96" size="1.778" layer="97">V-to-I scaling set by current sensor output x IC3 gain / IC1 gain
-monitor has same scaling as control signal
-proportional gain set by R5, R7
+monitor has 0.5 scaling as control signal
 integral gain set by R8, C20</text>
 <text x="91.44" y="7.62" size="1.778" layer="97">***CASRXX sensors configured as Np=1/2/3 primary turns.
 Vout = 2.5V + Np*0.625V per nominal current Inom
