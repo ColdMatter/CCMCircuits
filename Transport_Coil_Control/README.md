@@ -20,25 +20,28 @@ The CASR50 sensors used for the two bypass circuits gives an output of 0.625V fo
 The current control box includes remote on/off, indicator leds, and signals from the Meanwell RTS-10000-36 high-current supply.  
 
 ### Connections and cabling 
-The interface to the supply is achieved through three rear-panel connectors called CN991, CN992, and CN993, which are 20 pins, 10 pins, and 10 pins, respectively (HRS DF11-XYDP-2DS connectors, where XY = 10 or 20).  The signals of CN992 and CN993 are connected internally.      
+The interface to the supply is achieved through three rear-panel connectors called CN991, CN992, and CN993, which are 20 pins, 10 pins, and 10 pins, respectively (HRS DF11-XYDP-2DS connectors, where XY = 10 or 20).  The signals of CN992 and CN993 are connected internally.  I've hacked a commercial DB15 cable to facilitate connecting to the power supply.  The connections are as follows:      
 
 | RTS-10000-36 signal  | rear panel pin | Cable wire color | DB15 position |
 | -------------------- | -------------- | ---------------- | ------------- |
-| RC+                  | CN992 p10      | blue             | 1             |
-| 12V-AUX              | CN991 p1       | orange           | 2             |
-| GND-AUX              | CN991 p3       | green            | 3             |
-| DC-OK2               | CN991 p4       | red              | 4             |
+| RC+                  | CN992 p10      | pinkish brown    | 1             |
+| 12V-AUX              | CN991 p1       | red              | 2             |
+| GND-AUX              | CN991 p3       | orange           | 3             |
+| DC-OK2               | CN991 p4       | pink             | 4             |
 | +V                   | CN991 p5       | yellow           | 5             |
-| AC-FAIL2             | CN991 p8       | white            | 6             |
-| -V                   | CN991 p7       | brown            | 7             |
-| OTP2                 | CN991 p9       | black            | 8             |
-| FAN-FAIL2            | CN991 p10      | green            | 9             |
-| OTP1                 | CN991 p13      | red              | 10            |
-| DC-OK1               | CN991 p14      | white            | 11            |
-| AC-FAIL1             | CN991 p19      | black            | 12            |
-| FAN-FAIL1            | CN991 p20      | red              | 13            |
+| AC-FAIL2             | CN991 p8       | green            | 6             |
+| -V                   | CN991 p7       | cyan             | 7             |
+| OTP2                 | CN991 p9       | blue             | 8             |
+| FAN-FAIL2            | CN991 p10      | light blue       | 9             |
+| OTP1                 | CN991 p13      | purple           | 10            |
+| DC-OK1               | CN991 p14      | grey             | 11            |
+| AC-FAIL1             | CN991 p19      | white            | 12            |
+| FAN-FAIL1            | CN991 p20      | black            | 13            |
+| -                    | -              | brown + black    | 14            |
+| -                    | -              | red + black      | 15            |
+|                      |                |                  |               |
 
-It is unclear to me if the duplicated signals (e.g. fan-fail1 and fan-fail2) are independent or not.  Measurements indicate that they are at least electrically independent.  I've wired the control box in a way such that either of the two duplicated signals should trigger the indicator led (see below). 
+Note that the error/status signals are duplicated in two, electrically independent, channels.  Error signal X1 (e.g. fan-fail1) is a relay contact that closes to indicate failure (connects to fan-fail1-gnd).  Error signal X2 (e.g. fan-fail2) is an open-collector output that accomplishes the same functionality.  I've wired the control box in a way such that either of the two duplicated signals should trigger the indicator led (see below). 
 
 There are also a number of connections to be made locally on the rear panel of the power supply.  Most of these simply connect the status indicator signals to system ground (GND-AUX).  The two exceptions are the output sense feedback, i.e. (CN992 p3 <--> output +) and (CN992 p5 <--> output -).  The ground connections are as follows (local brown wires daisy-chained to GND-AUX on CN991 p3).
 
@@ -54,6 +57,7 @@ There are also a number of connections to be made locally on the rear panel of t
 | DC-OK1-GND           | CN991 p16      |
 | FAN-FAIL1-GND        | CN991 p18      |
 | AC-FAIL1-GND         | CN991 p17      |
+|                      |                |
 
 ### Remote on/off and interlocks 
 The remote on/off control of the power supply is described in its datasheet.  Basically, RC- is connected to GND-AUX and RC+ is connected to 12V-AUX to enable the supply.  We use this as an interlock to enable/disable the supply for water flow and temperature conditions.  All of the following interlocks must be wired closed to enable the supply:

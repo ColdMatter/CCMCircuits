@@ -1,23 +1,25 @@
-Circuit: * C:\Users\nfitch\Desktop\LTC1440 VtoF.asc
+Questionable use of curly braces in ".model sir870adp vdmos(rg=3 vto=2.9 rd=3.2m rs=1.5m rb={m} kp=100 mtriode=1.85 cgdmax=1.4n cgdmin=70p cgs=2.9n cjo=3.6n m=.4 a=.7 vj=.7 lambda=20m is=3p ksubthres=.08 mfg=siliconix vds=100 ron=5.5m qg=53.5n)"
+    Error: undefined symbol in: "[m]"
+Circuit: * C:\repos\CCM\CCMCircuits\CCM_0020_Floating_Leakage_Monitor\models\micropower_VtoF\LTC1440 VtoF.asc
 
 Direct Newton iteration for .op point succeeded.
 
-Date: Thu Aug 01 12:54:36 2019
-Total elapsed time: 6.636 seconds.
+Date: Mon Aug 12 14:46:09 2019
+Total elapsed time: 16.979 seconds.
 
 tnom = 27
 temp = 27
 method = modified trap
-totiter = 212408
-traniter = 212371
-tranpoints = 58716
-accept = 41418
-rejected = 17298
-matrix size = 53
-fillins = 41
+totiter = 533757
+traniter = 533716
+tranpoints = 147311
+accept = 103521
+rejected = 43790
+matrix size = 58
+fillins = 43
 solver = Normal
-Thread vector: 27.8/12.5[5] 7.9/4.1[5] 3.1/2.3[4] 0.4/1.4[1]  2592/500
-Matrix Compiler1: 5.88 KB object code size  2.0/0.7/[0.5]
-Matrix Compiler2: 5.72 KB object code size  0.7/0.9/[0.6]
+Thread vector: 27.2/12.5[5] 7.7/3.7[5] 2.7/2.0[5] 0.3/1.2[1]  2592/500
+Matrix Compiler1: 6.33 KB object code size  1.7/0.8/[0.6]
+Matrix Compiler2: off  [0.7]/1.4/0.9
 
 

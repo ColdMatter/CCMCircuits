@@ -1,0 +1,22 @@
+Circuit: * C:\Users\nfitch\Desktop\Draft4.asc
+
+Direct Newton iteration for .op point succeeded.
+
+Date: Thu Jan 30 15:56:29 2020
+Total elapsed time: 0.109 seconds.
+
+tnom = 27
+temp = 27
+method = modified trap
+totiter = 2538
+traniter = 2528
+tranpoints = 1229
+accept = 1186
+rejected = 43
+matrix size = 17
+fillins = 6
+solver = Normal
+Matrix Compiler1: 982 bytes object code size  0.4/0.2/[0.1]
+Matrix Compiler2: 1.57 KB object code size  0.2/0.2/[0.2]
+
+

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="9.3.1">
+<eagle version="9.5.1">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
 <setting keepoldvectorfont="yes"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
+<grid distance="0.025" unitdist="inch" unit="inch" style="lines" multiple="4" display="yes" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
 <layer number="2" name="Route2" color="1" fill="3" visible="no" active="no"/>
@@ -5796,23 +5796,19 @@ Alternatively, you could use high-power diodes, which would probably be faster.<
 <text x="133.35" y="134.62" size="1.778" layer="97">12-18V unregulated</text>
 <text x="132.715" y="113.665" size="1.778" layer="97">high = VISO (unreg)</text>
 <text x="132.715" y="109.855" size="1.778" layer="97">high = VDDB (reg)</text>
-<text x="218.44" y="63.5" size="1.778" layer="97">output molex connectors
-have 1=gate, 2=source
-
-gate protection etc. at FET
-a good citizen would not twist 
-gate/source wires, input 
-inductance is generally bad!</text>
+<text x="220.98" y="73.66" size="1.778" layer="97">output molex connectors
+have 1=gate, 2=source</text>
 <text x="170.18" y="63.5" size="1.778" layer="97">charge pump diodes (D1/D2) should
 be Schottky (fast), rated for &gt; 60V
 
-bootstrap capacitors (C14/C15) should 
+bootstrap capacitors (C15/C16) should 
 be  &gt; 10x FET gate-source capacitance
-IXFN180N15P FET has Cgs = 7nF</text>
+IXFN180N15P FET has Cgs = 7nF
+IXFN360N10P FET has Cgs = 36nF</text>
 <text x="116.84" y="63.5" size="1.778" layer="97">nominal &lt;10 mA isolated current
 expected quiescent current draw: 
 HIP4082: 4 mA
-LT1097: 1 mA</text>
+AD820 (next sheet): 1 mA</text>
 <text x="239.395" y="125.095" size="1.778" layer="97">BHIGH</text>
 <text x="239.395" y="120.015" size="1.778" layer="97">BLOW</text>
 <text x="239.395" y="112.395" size="1.778" layer="97">ALOW</text>
