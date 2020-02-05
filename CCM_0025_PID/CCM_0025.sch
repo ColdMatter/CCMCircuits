@@ -5442,12 +5442,6 @@ high speed (Philips)</description>
 <part name="D2" library="custom_parts" deviceset="1N4148" device=""/>
 <part name="R22" library="acrooptics" deviceset="R" device="0603" value="10k"/>
 <part name="R23" library="acrooptics" deviceset="R" device="0603" value="note 1"/>
-<part name="R38" library="acrooptics" deviceset="R" device="0603" value="10k"/>
-<part name="R39" library="acrooptics" deviceset="R" device="0603" value="10k"/>
-<part name="P+12" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="V+" device=""/>
-<part name="P-12" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="V-" device=""/>
-<part name="D5" library="noah" deviceset="LM4040" device="" value="LM4040-10V"/>
-<part name="D6" library="noah" deviceset="LM4040" device="" value="LM4040-10V"/>
 <part name="IC11" library="noah" deviceset="AD825_B" device="R" value="AD825"/>
 <part name="R41" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-TRIMM" device="3296W" package3d_urn="urn:adsk.eagle:package:26033/1" value="100k"/>
 <part name="P+14" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="V+" device=""/>
@@ -5461,6 +5455,7 @@ high speed (Philips)</description>
 <part name="FRAME2" library="frames" library_urn="urn:adsk.eagle:library:229" deviceset="A4L-LOC" device=""/>
 <part name="C11" library="acrooptics" deviceset="C" device="0603" value="0.1u"/>
 <part name="C12" library="acrooptics" deviceset="C" device="0603" value="0.1u"/>
+<part name="SUPPLY23" library="supply2" deviceset="GND" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -6637,17 +6632,17 @@ connect -Vsupply to GND</text>
 <sheet>
 <description>misc</description>
 <plain>
-<text x="55.88" y="114.3" size="1.778" layer="97">integrator clamps/limits
+<text x="55.88" y="121.92" size="1.778" layer="97">integrator clamps/limits
 act as anti-windup when
 output is saturated</text>
 <text x="147.32" y="119.38" size="1.778" layer="97">note 1:
 install RB to enable negative integrator limit
-Vlimit(-) = (-VN - 0.6V)*RB/RA - 0.6V
+Vlimit(-) = (-VN - 0.6V)*R23/R22 - 0.6V
 Vlimit(-) goes more positive as VN goes more negative
 turning trimpot CW deceases VN, increasing Vlimit(-)</text>
 <text x="147.32" y="104.14" size="1.778" layer="97">note 2:
 install RC to enable positive integrator limit
-Vlimit(+) = 0.6V + (0.6V - VP)*RC/RD
+Vlimit(+) = 0.6V + (0.6V - VP)*R24/R25
 Vlimit(+) goes more positive as VP goes more negative
 turning trimpot CW decreases VP, increasing Vlimit(+)</text>
 <text x="147.32" y="88.9" size="1.778" layer="97">note 3:
@@ -6771,19 +6766,19 @@ to invert, reverse X1+X2 connections s.t. Verror = Vfeedback - Vcontrol</text>
 <attribute name="NAME" x="173.609" y="39.751" size="1.778" layer="95"/>
 <attribute name="VALUE" x="173.609" y="35.941" size="1.778" layer="96"/>
 </instance>
-<instance part="R36" gate="R$1" x="45.72" y="156.21" smashed="yes" rot="R90">
-<attribute name="NAME" x="40.005" y="157.0736" size="1.778" layer="95"/>
-<attribute name="VALUE" x="40.005" y="154.178" size="1.778" layer="96"/>
+<instance part="R36" gate="R$1" x="22.86" y="158.75" smashed="yes" rot="R90">
+<attribute name="NAME" x="17.145" y="159.6136" size="1.778" layer="95"/>
+<attribute name="VALUE" x="17.145" y="156.718" size="1.778" layer="96"/>
 </instance>
-<instance part="R37" gate="R$1" x="45.72" y="128.27" smashed="yes" rot="R90">
-<attribute name="NAME" x="39.37" y="129.1336" size="1.778" layer="95"/>
-<attribute name="VALUE" x="40.005" y="126.873" size="1.778" layer="96"/>
+<instance part="R37" gate="R$1" x="22.86" y="130.81" smashed="yes" rot="R90">
+<attribute name="NAME" x="16.51" y="131.6736" size="1.778" layer="95"/>
+<attribute name="VALUE" x="17.145" y="129.413" size="1.778" layer="96"/>
 </instance>
-<instance part="P+11" gate="1" x="45.72" y="165.1" smashed="yes">
-<attribute name="VALUE" x="43.815" y="165.735" size="1.778" layer="96"/>
+<instance part="P+11" gate="1" x="22.86" y="167.64" smashed="yes">
+<attribute name="VALUE" x="20.955" y="168.275" size="1.778" layer="96"/>
 </instance>
-<instance part="P-11" gate="1" x="45.72" y="119.38" smashed="yes">
-<attribute name="VALUE" x="44.45" y="116.84" size="1.778" layer="96"/>
+<instance part="P-11" gate="1" x="22.86" y="121.92" smashed="yes">
+<attribute name="VALUE" x="21.59" y="119.38" size="1.778" layer="96"/>
 </instance>
 <instance part="X7" gate="-1" x="129.54" y="45.72" smashed="yes">
 <attribute name="NAME" x="132.08" y="44.958" size="1.524" layer="95"/>
@@ -6818,21 +6813,21 @@ to invert, reverse X1+X2 connections s.t. Verror = Vfeedback - Vcontrol</text>
 <attribute name="NAME" x="150.749" y="39.751" size="1.778" layer="95"/>
 <attribute name="VALUE" x="150.749" y="35.941" size="1.778" layer="96"/>
 </instance>
-<instance part="D3" gate="G$1" x="45.72" y="146.05" smashed="yes" rot="R90">
-<attribute name="NAME" x="40.259" y="147.32" size="1.778" layer="95"/>
-<attribute name="VALUE" x="29.464" y="144.526" size="1.778" layer="96"/>
+<instance part="D3" gate="G$1" x="22.86" y="148.59" smashed="yes" rot="R90">
+<attribute name="NAME" x="17.399" y="149.86" size="1.778" layer="95"/>
+<attribute name="VALUE" x="6.604" y="147.066" size="1.778" layer="96"/>
 </instance>
-<instance part="D4" gate="G$1" x="45.72" y="138.43" smashed="yes" rot="R90">
-<attribute name="NAME" x="40.259" y="139.7" size="1.778" layer="95"/>
-<attribute name="VALUE" x="28.829" y="136.271" size="1.778" layer="96"/>
+<instance part="D4" gate="G$1" x="22.86" y="140.97" smashed="yes" rot="R90">
+<attribute name="NAME" x="17.399" y="142.24" size="1.778" layer="95"/>
+<attribute name="VALUE" x="5.969" y="138.811" size="1.778" layer="96"/>
 </instance>
 <instance part="IC10" gate="G$1" x="71.12" y="144.78" smashed="yes">
 <attribute name="NAME" x="66.04" y="153.035" size="1.778" layer="95"/>
 <attribute name="VALUE" x="64.77" y="150.495" size="1.778" layer="96"/>
 </instance>
 <instance part="R40" gate="G$1" x="58.42" y="142.24" smashed="yes" rot="MR180">
-<attribute name="NAME" x="50.165" y="141.986" size="1.778" layer="95" rot="MR180"/>
-<attribute name="VALUE" x="49.53" y="144.78" size="1.778" layer="96" rot="MR180"/>
+<attribute name="NAME" x="54.61" y="142.494" size="1.778" layer="95" rot="MR0"/>
+<attribute name="VALUE" x="55.245" y="139.7" size="1.778" layer="96" rot="MR0"/>
 </instance>
 <instance part="P+13" gate="1" x="73.66" y="154.94" smashed="yes">
 <attribute name="VALUE" x="71.755" y="155.575" size="1.778" layer="96"/>
@@ -6840,41 +6835,19 @@ to invert, reverse X1+X2 connections s.t. Verror = Vfeedback - Vcontrol</text>
 <instance part="P-13" gate="1" x="73.66" y="134.62" smashed="yes">
 <attribute name="VALUE" x="72.39" y="132.08" size="1.778" layer="96"/>
 </instance>
-<instance part="R38" gate="R$1" x="45.72" y="100.33" smashed="yes" rot="R90">
-<attribute name="NAME" x="40.005" y="101.1936" size="1.778" layer="95"/>
-<attribute name="VALUE" x="40.005" y="98.298" size="1.778" layer="96"/>
+<instance part="IC11" gate="G$1" x="71.12" y="104.14" smashed="yes">
+<attribute name="NAME" x="66.04" y="112.395" size="1.778" layer="95"/>
+<attribute name="VALUE" x="64.77" y="109.855" size="1.778" layer="96"/>
 </instance>
-<instance part="R39" gate="R$1" x="45.72" y="72.39" smashed="yes" rot="R90">
-<attribute name="NAME" x="39.37" y="73.2536" size="1.778" layer="95"/>
-<attribute name="VALUE" x="40.005" y="70.993" size="1.778" layer="96"/>
+<instance part="R41" gate="G$1" x="58.42" y="101.6" smashed="yes" rot="MR180">
+<attribute name="NAME" x="50.165" y="101.346" size="1.778" layer="95" rot="MR180"/>
+<attribute name="VALUE" x="49.53" y="104.14" size="1.778" layer="96" rot="MR180"/>
 </instance>
-<instance part="P+12" gate="1" x="45.72" y="109.22" smashed="yes">
-<attribute name="VALUE" x="43.815" y="109.855" size="1.778" layer="96"/>
+<instance part="P+14" gate="1" x="73.66" y="114.3" smashed="yes">
+<attribute name="VALUE" x="71.755" y="114.935" size="1.778" layer="96"/>
 </instance>
-<instance part="P-12" gate="1" x="45.72" y="63.5" smashed="yes">
-<attribute name="VALUE" x="44.45" y="60.96" size="1.778" layer="96"/>
-</instance>
-<instance part="D5" gate="G$1" x="45.72" y="90.17" smashed="yes" rot="R90">
-<attribute name="NAME" x="40.259" y="91.44" size="1.778" layer="95"/>
-<attribute name="VALUE" x="29.464" y="88.646" size="1.778" layer="96"/>
-</instance>
-<instance part="D6" gate="G$1" x="45.72" y="82.55" smashed="yes" rot="R90">
-<attribute name="NAME" x="40.259" y="83.82" size="1.778" layer="95"/>
-<attribute name="VALUE" x="28.829" y="80.391" size="1.778" layer="96"/>
-</instance>
-<instance part="IC11" gate="G$1" x="71.12" y="88.9" smashed="yes">
-<attribute name="NAME" x="66.04" y="97.155" size="1.778" layer="95"/>
-<attribute name="VALUE" x="64.77" y="94.615" size="1.778" layer="96"/>
-</instance>
-<instance part="R41" gate="G$1" x="58.42" y="86.36" smashed="yes" rot="MR180">
-<attribute name="NAME" x="50.165" y="86.106" size="1.778" layer="95" rot="MR180"/>
-<attribute name="VALUE" x="49.53" y="88.9" size="1.778" layer="96" rot="MR180"/>
-</instance>
-<instance part="P+14" gate="1" x="73.66" y="99.06" smashed="yes">
-<attribute name="VALUE" x="71.755" y="99.695" size="1.778" layer="96"/>
-</instance>
-<instance part="P-14" gate="1" x="73.66" y="78.74" smashed="yes">
-<attribute name="VALUE" x="72.39" y="76.2" size="1.778" layer="96"/>
+<instance part="P-14" gate="1" x="73.66" y="93.98" smashed="yes">
+<attribute name="VALUE" x="72.39" y="91.44" size="1.778" layer="96"/>
 </instance>
 <instance part="FRAME2" gate="G$1" x="0" y="0" smashed="yes">
 <attribute name="DRAWING_NAME" x="217.17" y="15.24" size="2.54" layer="94"/>
@@ -6888,6 +6861,9 @@ to invert, reverse X1+X2 connections s.t. Verror = Vfeedback - Vcontrol</text>
 <instance part="C12" gate="G$1" x="142.24" y="39.37" smashed="yes">
 <attribute name="NAME" x="143.129" y="39.751" size="1.778" layer="95"/>
 <attribute name="VALUE" x="143.129" y="35.941" size="1.778" layer="96"/>
+</instance>
+<instance part="SUPPLY23" gate="GND" x="15.24" y="144.78" smashed="yes" rot="MR90">
+<attribute name="VALUE" x="7.62" y="145.415" size="1.778" layer="96" rot="MR180"/>
 </instance>
 </instances>
 <busses>
@@ -6984,6 +6960,15 @@ to invert, reverse X1+X2 connections s.t. Verror = Vfeedback - Vcontrol</text>
 <wire x1="142.24" y1="43.18" x2="149.86" y2="43.18" width="0.1524" layer="91"/>
 <junction x="142.24" y="43.18"/>
 </segment>
+<segment>
+<pinref part="D3" gate="G$1" pin="A"/>
+<pinref part="D4" gate="G$1" pin="C"/>
+<wire x1="22.86" y1="146.05" x2="22.86" y2="144.78" width="0.1524" layer="91"/>
+<pinref part="SUPPLY23" gate="GND" pin="GND"/>
+<wire x1="22.86" y1="144.78" x2="22.86" y2="143.51" width="0.1524" layer="91"/>
+<wire x1="17.78" y1="144.78" x2="22.86" y2="144.78" width="0.1524" layer="91"/>
+<junction x="22.86" y="144.78"/>
+</segment>
 </net>
 <net name="V-" class="0">
 <segment>
@@ -7048,7 +7033,7 @@ to invert, reverse X1+X2 connections s.t. Verror = Vfeedback - Vcontrol</text>
 <segment>
 <pinref part="R37" gate="R$1" pin="1"/>
 <pinref part="P-11" gate="1" pin="V-"/>
-<wire x1="45.72" y1="123.19" x2="45.72" y2="121.92" width="0.1524" layer="91"/>
+<wire x1="22.86" y1="125.73" x2="22.86" y2="124.46" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="IC10" gate="G$1" pin="-VS"/>
@@ -7056,14 +7041,9 @@ to invert, reverse X1+X2 connections s.t. Verror = Vfeedback - Vcontrol</text>
 <wire x1="73.66" y1="139.7" x2="73.66" y2="137.16" width="0.1524" layer="91"/>
 </segment>
 <segment>
-<pinref part="R39" gate="R$1" pin="1"/>
-<pinref part="P-12" gate="1" pin="V-"/>
-<wire x1="45.72" y1="67.31" x2="45.72" y2="66.04" width="0.1524" layer="91"/>
-</segment>
-<segment>
 <pinref part="IC11" gate="G$1" pin="-VS"/>
 <pinref part="P-14" gate="1" pin="V-"/>
-<wire x1="73.66" y1="83.82" x2="73.66" y2="81.28" width="0.1524" layer="91"/>
+<wire x1="73.66" y1="99.06" x2="73.66" y2="96.52" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="V+" class="0">
@@ -7129,7 +7109,7 @@ to invert, reverse X1+X2 connections s.t. Verror = Vfeedback - Vcontrol</text>
 <segment>
 <pinref part="P+11" gate="1" pin="V+"/>
 <pinref part="R36" gate="R$1" pin="2"/>
-<wire x1="45.72" y1="162.56" x2="45.72" y2="161.29" width="0.1524" layer="91"/>
+<wire x1="22.86" y1="165.1" x2="22.86" y2="163.83" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="P+13" gate="1" pin="V+"/>
@@ -7137,45 +7117,9 @@ to invert, reverse X1+X2 connections s.t. Verror = Vfeedback - Vcontrol</text>
 <wire x1="73.66" y1="152.4" x2="73.66" y2="149.86" width="0.1524" layer="91"/>
 </segment>
 <segment>
-<pinref part="P+12" gate="1" pin="V+"/>
-<pinref part="R38" gate="R$1" pin="2"/>
-<wire x1="45.72" y1="106.68" x2="45.72" y2="105.41" width="0.1524" layer="91"/>
-</segment>
-<segment>
 <pinref part="P+14" gate="1" pin="V+"/>
 <pinref part="IC11" gate="G$1" pin="+VS"/>
-<wire x1="73.66" y1="96.52" x2="73.66" y2="93.98" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="N$22" class="0">
-<segment>
-<pinref part="R36" gate="R$1" pin="1"/>
-<pinref part="D3" gate="G$1" pin="C"/>
-<wire x1="45.72" y1="151.13" x2="45.72" y2="149.86" width="0.1524" layer="91"/>
-<wire x1="45.72" y1="149.86" x2="45.72" y2="148.59" width="0.1524" layer="91"/>
-<wire x1="45.72" y1="149.86" x2="58.42" y2="149.86" width="0.1524" layer="91"/>
-<junction x="45.72" y="149.86"/>
-<pinref part="R40" gate="G$1" pin="A"/>
-<wire x1="58.42" y1="149.86" x2="58.42" y2="147.32" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="N$28" class="0">
-<segment>
-<pinref part="D3" gate="G$1" pin="A"/>
-<pinref part="D4" gate="G$1" pin="C"/>
-<wire x1="45.72" y1="143.51" x2="45.72" y2="140.97" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="N$40" class="0">
-<segment>
-<pinref part="D4" gate="G$1" pin="A"/>
-<pinref part="R37" gate="R$1" pin="2"/>
-<wire x1="45.72" y1="135.89" x2="45.72" y2="134.62" width="0.1524" layer="91"/>
-<wire x1="45.72" y1="134.62" x2="45.72" y2="133.35" width="0.1524" layer="91"/>
-<wire x1="45.72" y1="134.62" x2="58.42" y2="134.62" width="0.1524" layer="91"/>
-<junction x="45.72" y="134.62"/>
-<pinref part="R40" gate="G$1" pin="E"/>
-<wire x1="58.42" y1="137.16" x2="58.42" y2="134.62" width="0.1524" layer="91"/>
+<wire x1="73.66" y1="111.76" x2="73.66" y2="109.22" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$41" class="0">
@@ -7202,53 +7146,68 @@ to invert, reverse X1+X2 connections s.t. Verror = Vfeedback - Vcontrol</text>
 <net name="VP" class="0">
 <segment>
 <pinref part="IC11" gate="G$1" pin="IN-"/>
-<wire x1="66.04" y1="91.44" x2="63.5" y2="91.44" width="0.1524" layer="91"/>
-<wire x1="63.5" y1="91.44" x2="63.5" y2="104.14" width="0.1524" layer="91"/>
-<wire x1="63.5" y1="104.14" x2="81.28" y2="104.14" width="0.1524" layer="91"/>
-<wire x1="81.28" y1="104.14" x2="81.28" y2="88.9" width="0.1524" layer="91"/>
+<wire x1="66.04" y1="106.68" x2="63.5" y2="106.68" width="0.1524" layer="91"/>
+<wire x1="63.5" y1="106.68" x2="63.5" y2="119.38" width="0.1524" layer="91"/>
+<wire x1="63.5" y1="119.38" x2="81.28" y2="119.38" width="0.1524" layer="91"/>
+<wire x1="81.28" y1="119.38" x2="81.28" y2="104.14" width="0.1524" layer="91"/>
 <pinref part="IC11" gate="G$1" pin="OUT"/>
-<wire x1="81.28" y1="88.9" x2="78.74" y2="88.9" width="0.1524" layer="91"/>
-<label x="83.82" y="88.9" size="1.27" layer="95" xref="yes"/>
-<wire x1="83.82" y1="88.9" x2="81.28" y2="88.9" width="0.1524" layer="91"/>
-<junction x="81.28" y="88.9"/>
-</segment>
-</net>
-<net name="N$35" class="0">
-<segment>
-<pinref part="R38" gate="R$1" pin="1"/>
-<pinref part="D5" gate="G$1" pin="C"/>
-<wire x1="45.72" y1="95.25" x2="45.72" y2="93.98" width="0.1524" layer="91"/>
-<wire x1="45.72" y1="93.98" x2="45.72" y2="92.71" width="0.1524" layer="91"/>
-<wire x1="45.72" y1="93.98" x2="58.42" y2="93.98" width="0.1524" layer="91"/>
-<junction x="45.72" y="93.98"/>
-<pinref part="R41" gate="G$1" pin="A"/>
-<wire x1="58.42" y1="93.98" x2="58.42" y2="91.44" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="N$42" class="0">
-<segment>
-<pinref part="D5" gate="G$1" pin="A"/>
-<pinref part="D6" gate="G$1" pin="C"/>
-<wire x1="45.72" y1="87.63" x2="45.72" y2="85.09" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="N$43" class="0">
-<segment>
-<pinref part="D6" gate="G$1" pin="A"/>
-<pinref part="R39" gate="R$1" pin="2"/>
-<wire x1="45.72" y1="80.01" x2="45.72" y2="78.74" width="0.1524" layer="91"/>
-<wire x1="45.72" y1="78.74" x2="45.72" y2="77.47" width="0.1524" layer="91"/>
-<wire x1="45.72" y1="78.74" x2="58.42" y2="78.74" width="0.1524" layer="91"/>
-<junction x="45.72" y="78.74"/>
-<pinref part="R41" gate="G$1" pin="E"/>
-<wire x1="58.42" y1="81.28" x2="58.42" y2="78.74" width="0.1524" layer="91"/>
+<wire x1="81.28" y1="104.14" x2="78.74" y2="104.14" width="0.1524" layer="91"/>
+<label x="83.82" y="104.14" size="1.27" layer="95" xref="yes"/>
+<wire x1="83.82" y1="104.14" x2="81.28" y2="104.14" width="0.1524" layer="91"/>
+<junction x="81.28" y="104.14"/>
 </segment>
 </net>
 <net name="N$44" class="0">
 <segment>
 <pinref part="IC11" gate="G$1" pin="IN+"/>
 <pinref part="R41" gate="G$1" pin="S"/>
-<wire x1="66.04" y1="86.36" x2="63.5" y2="86.36" width="0.1524" layer="91"/>
+<wire x1="66.04" y1="101.6" x2="63.5" y2="101.6" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="+10V" class="0">
+<segment>
+<pinref part="D3" gate="G$1" pin="C"/>
+<pinref part="R36" gate="R$1" pin="1"/>
+<wire x1="22.86" y1="153.67" x2="22.86" y2="152.4" width="0.1524" layer="91"/>
+<wire x1="22.86" y1="152.4" x2="22.86" y2="151.13" width="0.1524" layer="91"/>
+<wire x1="22.86" y1="152.4" x2="27.94" y2="152.4" width="0.1524" layer="91"/>
+<junction x="22.86" y="152.4"/>
+<label x="27.94" y="152.4" size="1.27" layer="95" xref="yes"/>
+</segment>
+<segment>
+<pinref part="R41" gate="G$1" pin="A"/>
+<wire x1="58.42" y1="109.22" x2="58.42" y2="106.68" width="0.1524" layer="91"/>
+<wire x1="58.42" y1="109.22" x2="53.34" y2="109.22" width="0.1524" layer="91"/>
+<label x="53.34" y="109.22" size="1.27" layer="95" rot="R180" xref="yes"/>
+</segment>
+<segment>
+<pinref part="R40" gate="G$1" pin="A"/>
+<wire x1="58.42" y1="147.32" x2="58.42" y2="149.86" width="0.1524" layer="91"/>
+<wire x1="58.42" y1="149.86" x2="53.34" y2="149.86" width="0.1524" layer="91"/>
+<label x="53.34" y="149.86" size="1.27" layer="95" rot="R180" xref="yes"/>
+</segment>
+</net>
+<net name="-10V" class="0">
+<segment>
+<pinref part="R37" gate="R$1" pin="2"/>
+<pinref part="D4" gate="G$1" pin="A"/>
+<wire x1="22.86" y1="138.43" x2="22.86" y2="137.16" width="0.1524" layer="91"/>
+<wire x1="22.86" y1="137.16" x2="22.86" y2="135.89" width="0.1524" layer="91"/>
+<wire x1="22.86" y1="137.16" x2="27.94" y2="137.16" width="0.1524" layer="91"/>
+<junction x="22.86" y="137.16"/>
+<label x="27.94" y="137.16" size="1.27" layer="95" xref="yes"/>
+</segment>
+<segment>
+<pinref part="R41" gate="G$1" pin="E"/>
+<wire x1="58.42" y1="96.52" x2="58.42" y2="93.98" width="0.1524" layer="91"/>
+<wire x1="58.42" y1="93.98" x2="53.34" y2="93.98" width="0.1524" layer="91"/>
+<label x="53.34" y="93.98" size="1.27" layer="95" rot="R180" xref="yes"/>
+</segment>
+<segment>
+<pinref part="R40" gate="G$1" pin="E"/>
+<wire x1="58.42" y1="137.16" x2="58.42" y2="134.62" width="0.1524" layer="91"/>
+<wire x1="58.42" y1="134.62" x2="53.34" y2="134.62" width="0.1524" layer="91"/>
+<label x="53.34" y="134.62" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 </nets>
